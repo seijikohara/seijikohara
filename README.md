@@ -6,7 +6,7 @@
 [![Top Langs by Repo](https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=seijikohara&theme=default)](https://github.com/seijikohara)
 [![Top Langs by Commit](https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=seijikohara&theme=default)](https://github.com/seijikohara)
 
-[![Trophy](https://github-profile-trophy.vercel.app/?username=seijikohara&column=7)](https://github.com/seijikohara)
+[![Trophy](https://github-profile-trophy.vercel.app/?username=seijikohara&column=4)](https://github.com/seijikohara)
 
 [![GitHub Streak](https://streak-stats.demolab.com/?user=seijikohara&theme=default)](https://github.com/seijikohara)
 
