@@ -1,18 +1,23 @@
-### Hi there 👋
+# 📊 GitHub Stats:
+![](https://github-readme-stats.vercel.app/api?username=seijikohara&theme=default&hide_border=false&include_all_commits=true&count_private=true)<br/>
+![](https://github-readme-streak-stats.herokuapp.com/?user=seijikohara&theme=default&hide_border=false)<br/>
+![](https://github-readme-stats.vercel.app/api/top-langs/?username=seijikohara&theme=default&hide_border=false&include_all_commits=true&count_private=true&layout=compact)
 
-[![Contributions](https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=seijikohara&theme=default)](https://github.com/seijikohara)
-[![GitHub stats](https://github-profile-summary-cards.vercel.app/api/cards/stats?username=seijikohara&theme=default)](https://github.com/seijikohara)
-[![Commits](https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=seijikohara&theme=default&utcOffset=9)](https://github.com/seijikohara)
-[![Top Langs by Repo](https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=seijikohara&theme=default)](https://github.com/seijikohara)
-[![Top Langs by Commit](https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=seijikohara&theme=default)](https://github.com/seijikohara)
+![](https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=seijikohara&theme=default)<br/>
+![](https://github-profile-summary-cards.vercel.app/api/cards/stats?username=seijikohara&theme=default)
+![](https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=seijikohara&theme=default&utcOffset=9)<br/>
+![](https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=seijikohara&theme=default)
+![](https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=seijikohara&theme=default)<br/>
 
-[![Trophy](https://github-profile-trophy.vercel.app/?username=seijikohara&column=4)](https://github.com/seijikohara)
+## 🏆 GitHub Trophies
+![](https://github-profile-trophy.vercel.app/?username=seijikohara&theme=flat&no-frame=false&no-bg=true&margin-w=4)
 
-[![GitHub Streak](https://streak-stats.demolab.com/?user=seijikohara&theme=default)](https://github.com/seijikohara)
+### 🔝 Top Contributed Repo
+![](https://github-contributor-stats.vercel.app/api?username=seijikohara&limit=5&theme=flat&combine_all_yearly_contributions=true)
 
-[![Visitors](https://visitor-badge.glitch.me/badge?page_id=seijikohara&left_color=gray&right_color=blue)](https://github.com/seijikohara)
-[![Followers](https://img.shields.io/github/followers/seijikohara?style=social)](https://github.com/seijikohara)
+---
+[![](https://visitcount.itsvg.in/api?id=seijikohara&icon=0&color=0)](https://visitcount.itsvg.in)
 
-[![My Qiita posts](https://qiita-badge.apiapi.app/s/seijikohara/posts.svg)](http://qiita.com/seijikohara)
-[![My Qiita contributions](https://qiita-badge.apiapi.app/s/seijikohara/contributions.svg)](http://qiita.com/seijikohara)
-[![My Qiita followers](https://qiita-badge.apiapi.app/s/seijikohara/followers.svg)](http://qiita.com/seijikohara)
+[![](https://qiita-badge.apiapi.app/s/seijikohara/posts.svg)](http://qiita.com/seijikohara)
+[![](https://qiita-badge.apiapi.app/s/seijikohara/contributions.svg)](http://qiita.com/seijikohara)
+[![](https://qiita-badge.apiapi.app/s/seijikohara/followers.svg)](http://qiita.com/seijikohara)
