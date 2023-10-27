@@ -21,3 +21,6 @@
 [![](https://qiita-badge.apiapi.app/s/seijikohara/posts.svg)](http://qiita.com/seijikohara)
 [![](https://qiita-badge.apiapi.app/s/seijikohara/contributions.svg)](http://qiita.com/seijikohara)
 [![](https://qiita-badge.apiapi.app/s/seijikohara/followers.svg)](http://qiita.com/seijikohara)
+
+<!--START_SECTION:lapras-card-->
+<!--END_SECTION:lapras-card-->
