@@ -39,17 +39,19 @@ I'm working as an engineer.
 
 ### 🏆 GitHub Trophies
 
-![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=seijikohara&theme=flat&no-frame=false&no-bg=true&margin-w=4&row=1)
+![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=seijikohara&theme=flat&no-frame=false&no-bg=true&margin-w=4&column=5)
 
 ### 🔝 Top Contributed Repositories
 
-![Top Contributed Repo](https://github-contributor-stats.vercel.app/api?username=seijikohara&limit=5&theme=flat&combine_all_yearly_contributions=true)
+![Top Contributed Repo](https://github-contributor-stats.vercel.app/api?username=seijikohara&limit=10&theme=default&combine_all_yearly_contributions=true)
 
 ## ⏱️ WakaTime Stats
 
-[![WakaTime Stats](https://github-readme-stats.vercel.app/api/wakatime?username=aab016c3-ba5d-476e-9c07-eda41b6eef1d&layout=compact)](https://wakatime.com/@aab016c3-ba5d-476e-9c07-eda41b6eef1d)
-
 [![Total Time](https://wakatime.com/badge/user/aab016c3-ba5d-476e-9c07-eda41b6eef1d.svg)](https://wakatime.com/@aab016c3-ba5d-476e-9c07-eda41b6eef1d)
+
+[![WakaTime Coding Activity](https://wakatime.com/share/@seijikohara/348d10a2-aee0-4e74-8ea8-2a649faaacec.png)](https://wakatime.com/@aab016c3-ba5d-476e-9c07-eda41b6eef1d)
+[![WakaTime Languages](https://wakatime.com/share/@seijikohara/90c529e8-dad2-45db-ad38-24bfdfcbb4f2.png)](https://wakatime.com/@aab016c3-ba5d-476e-9c07-eda41b6eef1d)
+[![WakaTime Editors](https://wakatime.com/share/@seijikohara/eb801cbf-4f2b-4f35-9b6a-1b65f7c2a911.png)](https://wakatime.com/@aab016c3-ba5d-476e-9c07-eda41b6eef1d)
 
 ---
 
