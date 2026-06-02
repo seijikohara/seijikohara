@@ -14,24 +14,41 @@ concurrency:
   cancel-in-progress: false   # let an in-flight refresh finish its commit
 
 permissions:
-  contents: write             # required for the auto-commit step
+  contents: read              # generation jobs only read; commit job elevates below
 
 jobs:
-  build:
+  # ---- Parallel generation: one job per (card x theme) ----
+  metrics:
     runs-on: ubuntu-latest
-    timeout-minutes: 20        # many metrics steps run sequentially
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false        # one failing card must not cancel the others
+      matrix:
+        include:
+          - { card: stats,        theme: light, fg: "#1f2328" }
+          - { card: stats,        theme: dark,  fg: "#c9d1d9" }
+          - { card: languages,    theme: light, fg: "#1f2328" }
+          - { card: languages,    theme: dark,  fg: "#c9d1d9" }
+          - { card: isocalendar,  theme: light, fg: "#1f2328" }
+          - { card: isocalendar,  theme: dark,  fg: "#c9d1d9" }
+          - { card: activity,     theme: light, fg: "#1f2328" }
+          - { card: activity,     theme: dark,  fg: "#c9d1d9" }
+          - { card: habits,       theme: light, fg: "#1f2328" }
+          - { card: habits,       theme: dark,  fg: "#c9d1d9" }
+          - { card: achievements, theme: light, fg: "#1f2328" }
+          - { card: achievements, theme: dark,  fg: "#c9d1d9" }
+          - { card: repositories, theme: light, fg: "#1f2328" }
+          - { card: repositories, theme: dark,  fg: "#c9d1d9" }
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: true   # needed so the auto-commit step can push
+      - name: Prepare output directory
+        run: mkdir -p assets/metrics
 
-      # ----- Stats -----
-      - name: Stats (light)
+      - name: Stats
+        if: ${{ matrix.card == 'stats' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/stats.light.svg
+          filename: assets/metrics/stats.${{ matrix.theme }}.svg
           output_action: none
           base: header, activity, community, repositories, metadata
           base_indepth: yes
@@ -41,30 +58,14 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Stats (dark)
+      - name: Languages
+        if: ${{ matrix.card == 'languages' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/stats.dark.svg
-          output_action: none
-          base: header, activity, community, repositories, metadata
-          base_indepth: yes
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
-
-      # ----- Languages -----
-      - name: Languages (light)
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/languages.light.svg
+          filename: assets/metrics/languages.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -78,34 +79,14 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Languages (dark)
+      - name: Isocalendar
+        if: ${{ matrix.card == 'isocalendar' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/languages.dark.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_languages: yes
-          plugin_languages_indepth: yes
-          plugin_languages_sections: most-used
-          plugin_languages_details: bytes-size, percentage
-          plugin_languages_limit: 8
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
-
-      # ----- Isocalendar -----
-      - name: Isocalendar (light)
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/isocalendar.light.svg
+          filename: assets/metrics/isocalendar.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -116,31 +97,14 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Isocalendar (dark)
+      - name: Activity
+        if: ${{ matrix.card == 'activity' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/isocalendar.dark.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
-
-      # ----- Activity -----
-      - name: Activity (light)
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/activity.light.svg
+          filename: assets/metrics/activity.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -153,33 +117,14 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Activity (dark)
+      - name: Habits
+        if: ${{ matrix.card == 'habits' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/activity.dark.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_activity: yes
-          plugin_activity_limit: 5
-          plugin_activity_days: 0
-          plugin_activity_visibility: all
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
-
-      # ----- Habits -----
-      - name: Habits (light)
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/habits.light.svg
+          filename: assets/metrics/habits.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -194,35 +139,14 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Habits (dark)
+      - name: Achievements
+        if: ${{ matrix.card == 'achievements' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/habits.dark.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_habits: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 14
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_habits_trim: yes
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
-
-      # ----- Achievements -----
-      - name: Achievements (light)
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/achievements.light.svg
+          filename: assets/metrics/achievements.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -235,33 +159,14 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Achievements (dark)
+      - name: Repositories
+        if: ${{ matrix.card == 'repositories' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/achievements.dark.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_achievements: yes
-          plugin_achievements_threshold: C
-          plugin_achievements_secrets: yes
-          plugin_achievements_display: detailed
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
-
-      # ----- Repositories (top-repos approximation: most-starred) -----
-      - name: Repositories (light)
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/repositories.light.svg
+          filename: assets/metrics/repositories.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -274,29 +179,22 @@ jobs:
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #1f2328 !important; color: #1f2328 !important; }
+            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
 
-      - name: Repositories (dark)
-        uses: lowlighter/metrics@v3.34
+      - name: Upload card artifact
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/repositories.dark.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_repositories: yes
-          plugin_repositories_starred: 4
-          plugin_repositories_pinned: 2
-          plugin_repositories_order: featured, pinned, starred, random
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; color: #c9d1d9 !important; }
+          name: metrics-${{ matrix.card }}-${{ matrix.theme }}
+          path: assets/metrics/${{ matrix.card }}.${{ matrix.theme }}.svg
+          if-no-files-found: error
+          retention-days: 1
 
-      # ----- Contribution snake -----
-      - name: Contribution snake (light + dark)
+  # ---- Parallel generation: contribution snake ----
+  snake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Generate contribution snake (light + dark)
         uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -304,7 +202,39 @@ jobs:
             assets/snake/snake.svg
             assets/snake/snake-dark.svg?palette=github-dark
 
-      # ----- Commit everything in one go (only if changed) -----
+      - name: Upload snake artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: snake
+          path: assets/snake
+          if-no-files-found: error
+          retention-days: 1
+
+  # ---- Single aggregation commit (avoids parallel push races) ----
+  commit:
+    needs: [metrics, snake]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Download metrics artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: metrics-*
+          path: assets/metrics
+          merge-multiple: true
+
+      - name: Download snake artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: snake
+          path: assets/snake
+
       - name: Commit generated assets
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
