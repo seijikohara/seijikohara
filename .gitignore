@@ -1,0 +1,5 @@
+# Visual brainstorming companion (local-only, not part of the profile)
+.superpowers/
+
+# macOS
+.DS_Store
