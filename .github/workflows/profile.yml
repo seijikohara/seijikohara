@@ -170,7 +170,7 @@ jobs:
           ls -la assets/metrics/
 
       - name: Upload card artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: metrics-${{ matrix.card }}-${{ matrix.theme }}
           path: assets/metrics/${{ matrix.card }}.${{ matrix.theme }}.svg
@@ -191,7 +191,7 @@ jobs:
             assets/snake/snake-dark.svg?palette=github-dark
 
       - name: Upload snake artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snake
           path: assets/snake
@@ -211,14 +211,14 @@ jobs:
           persist-credentials: true
 
       - name: Download metrics artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: metrics-*
           path: assets/metrics
           merge-multiple: true
 
       - name: Download snake artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: snake
           path: assets/snake
