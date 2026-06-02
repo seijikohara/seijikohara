@@ -1,0 +1,27 @@
+name: Profile
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"   # every 6h, offset off the top of the hour
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/profile.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false   # let an in-flight refresh finish its commit
+
+permissions:
+  contents: write             # required for the auto-commit step
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20        # many metrics steps run sequentially
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true   # needed so the auto-commit step can push
