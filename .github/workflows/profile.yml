@@ -40,15 +40,12 @@ jobs:
           - { card: repositories, theme: light, fg: "#1f2328" }
           - { card: repositories, theme: dark,  fg: "#c9d1d9" }
     steps:
-      - name: Prepare output directory
-        run: mkdir -p assets/metrics
-
       - name: Stats
         if: ${{ matrix.card == 'stats' }}
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/stats.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: header, activity, community, repositories, metadata
           base_indepth: yes
@@ -65,7 +62,7 @@ jobs:
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/languages.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -86,7 +83,7 @@ jobs:
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/isocalendar.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -104,7 +101,7 @@ jobs:
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/activity.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -124,7 +121,7 @@ jobs:
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/habits.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -146,7 +143,7 @@ jobs:
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/achievements.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -166,7 +163,7 @@ jobs:
         uses: lowlighter/metrics@v3.34
         with:
           token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: assets/metrics/repositories.${{ matrix.theme }}.svg
+          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
           output_action: none
           base: ""
           config_animations: "no"
@@ -180,6 +177,19 @@ jobs:
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }
             h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
+
+      # metrics (use_prebuilt_image) writes to /metrics_renders/<filename>, NOT the
+      # workspace, when output_action is none. Recover the SVG into the workspace.
+      - name: Collect generated SVG into workspace
+        run: |
+          set -euo pipefail
+          mkdir -p assets/metrics
+          src="/metrics_renders/${{ matrix.card }}.${{ matrix.theme }}.svg"
+          dst="assets/metrics/${{ matrix.card }}.${{ matrix.theme }}.svg"
+          echo "Renders dir contents:" && sudo ls -la /metrics_renders || true
+          sudo cp "$src" "$dst"
+          sudo chown "$(id -u):$(id -g)" "$dst"
+          ls -la assets/metrics/
 
       - name: Upload card artifact
         uses: actions/upload-artifact@v4
