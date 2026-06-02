@@ -31,8 +31,6 @@ jobs:
           - { card: languages,    theme: dark,  fg: "#c9d1d9" }
           - { card: isocalendar,  theme: light, fg: "#1f2328" }
           - { card: isocalendar,  theme: dark,  fg: "#c9d1d9" }
-          - { card: activity,     theme: light, fg: "#1f2328" }
-          - { card: activity,     theme: dark,  fg: "#c9d1d9" }
           - { card: habits,       theme: light, fg: "#1f2328" }
           - { card: habits,       theme: dark,  fg: "#c9d1d9" }
           - { card: achievements, theme: light, fg: "#1f2328" }
@@ -91,26 +89,6 @@ jobs:
           config_base64: yes
           plugin_isocalendar: yes
           plugin_isocalendar_duration: full-year
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      - name: Activity
-        if: ${{ matrix.card == 'activity' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_activity: yes
-          plugin_activity_limit: 5
-          plugin_activity_days: 0
-          plugin_activity_visibility: all
           extras_css: |
             :root, body, svg, foreignObject { background: transparent !important; }
             .background, rect.background { fill: transparent !important; }

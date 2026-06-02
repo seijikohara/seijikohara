@@ -40,11 +40,6 @@ Software Engineer.
   <img alt="Contribution calendar" src="./assets/metrics/isocalendar.light.svg">
 </picture>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/activity.dark.svg">
-  <img alt="Recent activity" src="./assets/metrics/activity.light.svg">
-</picture>
-
 <table>
   <tr>
     <td width="50%">
