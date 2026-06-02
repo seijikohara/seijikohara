@@ -157,7 +157,7 @@ planning after checking current metrics capabilities.
 
 ## Secrets & Permissions
 
-- **`METRICS_TOKEN`** — a classic personal access token (scopes: `repo`,
+- **`GH_METRICS_TOKEN`** — a classic personal access token (scopes: `repo`,
   `read:org`, `read:user`) is recommended for metrics. `GITHUB_TOKEN` alone is
   insufficient for some plugins (full-year isocalendar, private contribution counts).
 - Workflow `permissions: contents: write` for committing assets.
@@ -217,3 +217,29 @@ docs/superpowers/specs/2026-06-02-resilient-profile-readme-design.md
 - Real-time page-view counting (removed).
 - WakaTime integration (removed).
 - Redesigning the social/package/follower badges (kept as-is; they are stable).
+
+## Implementation Outcome (2026-06-03)
+
+The design shipped with these refinements discovered during implementation:
+
+- **Secret name:** the metrics token is stored as `GH_METRICS_TOKEN` (classic PAT). GitHub
+  App installation tokens and fine-grained PATs cannot read the account-level GraphQL data
+  metrics needs, so a classic PAT is required.
+- **Parallel generation:** instead of one sequential job, generation runs as a matrix of
+  one job per (card × theme). Each job uploads its SVG as an artifact, and a single `commit`
+  job (`needs: [metrics, snake]`) downloads all artifacts and commits once — avoiding
+  parallel push races while cutting wall-clock from ~20 min to a few minutes.
+- **metrics output recovery:** with `use_prebuilt_image` (default) and `output_action: none`,
+  metrics writes to `/metrics_renders/<filename>`, NOT the workspace. Each job copies the SVG
+  from `/metrics_renders` into `assets/metrics/` before uploading.
+- **Activity card removed:** the metrics v3.34 activity plugin throws
+  `TypeError: Cannot read properties of undefined (reading 'login')` on events whose user is
+  null (e.g. deleted accounts), and neither `plugin_activity_filter` nor `plugin_activity_days`
+  avoids it. The card is dropped; isocalendar covers contribution visualization. (Resolves the
+  "keep both activity + isocalendar" question deferred above.)
+- **Node 24 actions:** `upload-artifact@v7` and `download-artifact@v8` (Node 24) replace the
+  deprecated `@v4` (Node 20), with `merge-multiple`/`pattern` confirmed retained.
+- **Repositories approximation:** `plugin_repositories` with `plugin_repositories_starred`
+  (most-starred) plus `_pinned`.
+- **Verified:** light and dark rendering confirmed on GitHub; the 6-hour schedule runs
+  automatically and commits refreshed assets.

@@ -12,7 +12,7 @@
 
 ## Important Constraints & Discoveries (read before starting)
 
-1. **metrics needs a classic PAT.** The `token:` input requires a classic Personal Access Token stored as the repo secret `METRICS_TOKEN`. The built-in `GITHUB_TOKEN` cannot read profile/account data. Committing is separate and uses `GITHUB_TOKEN` with `permissions: contents: write`.
+1. **metrics needs a classic PAT.** The `token:` input requires a classic Personal Access Token stored as the repo secret `GH_METRICS_TOKEN`. The built-in `GITHUB_TOKEN` cannot read profile/account data. Committing is separate and uses `GITHUB_TOKEN` with `permissions: contents: write`.
 2. **metrics has no dark theme.** There is no `theme=dark`/color input. Each card is rendered twice (light + dark) using `extras_css` to force a transparent background and the right text color. **CSS selectors vary per plugin and per metrics version and MUST be verified against the rendered SVG.** This plan ships sensible defaults and a verify-and-adjust step.
 3. **One commit per run, not per card.** Every metrics step uses `output_action: none` (write only). A single trailing `git-auto-commit-action` step commits all changed files under `assets/`. The action skips the commit automatically when there is no diff (no empty commits).
 4. **snake commits to main, not an `output` branch.** To keep relative-path references and zero external dependence, `Platane/snk/svg-only` writes into `assets/snake/` and the same auto-commit step persists it. (The maintainer's `output`-branch example is intentionally NOT used.)
@@ -41,7 +41,7 @@ h2, h2.field, .field, text, tspan, .value, th, td { fill: #c9d1d9 !important; co
 
 **Common metrics step inputs** (every metrics step includes these):
 ```yaml
-token: ${{ secrets.METRICS_TOKEN }}
+token: ${{ secrets.GH_METRICS_TOKEN }}
 output_action: none          # write only; a single auto-commit step commits later
 base: ""                     # strip default header/sections so only this card renders
 config_animations: "no"      # static image
@@ -51,7 +51,7 @@ config_base64: yes           # inline images so the SVG is self-contained
 
 ---
 
-## Task 0: Prerequisite — create the METRICS_TOKEN secret
+## Task 0: Prerequisite — create the GH_METRICS_TOKEN secret
 
 **This is a one-time manual setup by the repository owner.** No code; the workflow cannot fetch profile data without it.
 
@@ -66,11 +66,11 @@ config_base64: yes           # inline images so the SVG is self-contained
 
 - [ ] **Step 2: Add it as a repo secret**
 
-  Repo → Settings → Secrets and variables → Actions → New repository secret. Name: `METRICS_TOKEN`. Value: the token from Step 1.
+  Repo → Settings → Secrets and variables → Actions → New repository secret. Name: `GH_METRICS_TOKEN`. Value: the token from Step 1.
 
 - [ ] **Step 3: Confirm**
 
-  Verify the secret `METRICS_TOKEN` appears under Actions secrets. (Value is write-only; you only confirm the name exists.)
+  Verify the secret `GH_METRICS_TOKEN` appears under Actions secrets. (Value is write-only; you only confirm the name exists.)
 
 ---
 
@@ -140,7 +140,7 @@ Insert after the Checkout step:
       - name: Stats (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/stats.light.svg
           output_action: none
           base: header, activity, community, repositories, metadata
@@ -156,7 +156,7 @@ Insert after the Checkout step:
       - name: Stats (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/stats.dark.svg
           output_action: none
           base: header, activity, community, repositories, metadata
@@ -236,7 +236,7 @@ Insert after the Stats (dark) step:
       - name: Languages (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/languages.light.svg
           output_action: none
           base: ""
@@ -256,7 +256,7 @@ Insert after the Stats (dark) step:
       - name: Languages (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/languages.dark.svg
           output_action: none
           base: ""
@@ -280,7 +280,7 @@ Insert after the Stats (dark) step:
       - name: Isocalendar (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/isocalendar.light.svg
           output_action: none
           base: ""
@@ -297,7 +297,7 @@ Insert after the Stats (dark) step:
       - name: Isocalendar (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/isocalendar.dark.svg
           output_action: none
           base: ""
@@ -337,7 +337,7 @@ git commit -m "feat(profile): generate languages and isocalendar cards"
       - name: Activity (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/activity.light.svg
           output_action: none
           base: ""
@@ -356,7 +356,7 @@ git commit -m "feat(profile): generate languages and isocalendar cards"
       - name: Activity (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/activity.dark.svg
           output_action: none
           base: ""
@@ -379,7 +379,7 @@ git commit -m "feat(profile): generate languages and isocalendar cards"
       - name: Habits (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/habits.light.svg
           output_action: none
           base: ""
@@ -400,7 +400,7 @@ git commit -m "feat(profile): generate languages and isocalendar cards"
       - name: Habits (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/habits.dark.svg
           output_action: none
           base: ""
@@ -444,7 +444,7 @@ git commit -m "feat(profile): generate activity and habits cards"
       - name: Achievements (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/achievements.light.svg
           output_action: none
           base: ""
@@ -463,7 +463,7 @@ git commit -m "feat(profile): generate activity and habits cards"
       - name: Achievements (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/achievements.dark.svg
           output_action: none
           base: ""
@@ -486,7 +486,7 @@ git commit -m "feat(profile): generate activity and habits cards"
       - name: Repositories (light)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/repositories.light.svg
           output_action: none
           base: ""
@@ -505,7 +505,7 @@ git commit -m "feat(profile): generate activity and habits cards"
       - name: Repositories (dark)
         uses: lowlighter/metrics@v3.34
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.GH_METRICS_TOKEN }}
           filename: assets/metrics/repositories.dark.svg
           output_action: none
           base: ""
@@ -731,7 +731,7 @@ Use the superpowers:finishing-a-development-branch skill to decide how to integr
 
 ## Self-Review (completed by plan author)
 
-- **Spec coverage:** Every spec card decision maps to a task — keep (Task 7 static badges), generate stats/languages/isocalendar/activity/habits/achievements/repositories (Tasks 2–5), snake (Task 6), remove views/WakaTime (Task 7 omits them; Step 2 greps to confirm), light/dark (`<picture>` in Task 7, verified Task 8), 6h cron + concurrency + permissions (Task 1), commit strategy (Task 2 auto-commit), METRICS_TOKEN (Task 0). Repositories approximation handled in Task 5 with `plugin_repositories_starred`.
+- **Spec coverage:** Every spec card decision maps to a task — keep (Task 7 static badges), generate stats/languages/isocalendar/activity/habits/achievements/repositories (Tasks 2–5), snake (Task 6), remove views/WakaTime (Task 7 omits them; Step 2 greps to confirm), light/dark (`<picture>` in Task 7, verified Task 8), 6h cron + concurrency + permissions (Task 1), commit strategy (Task 2 auto-commit), GH_METRICS_TOKEN (Task 0). Repositories approximation handled in Task 5 with `plugin_repositories_starred`.
 - **Placeholders:** none — every step has concrete YAML/commands/expected output. The theming "verify and adjust" loop is an explicit, bounded action, not a TODO.
 - **Type/name consistency:** filenames (`assets/metrics/<card>.<theme>.svg`, `assets/snake/snake.svg` / `snake-dark.svg`), `file_pattern: assets/**`, and README `srcset`/`src` paths match across Tasks 2–8.
 
@@ -740,3 +740,19 @@ Use the superpowers:finishing-a-development-branch skill to decide how to integr
 - **metrics CSS selectors** may need per-card adjustment (Task 2 establishes the loop; Task 8 finalizes). This is inherent to metrics having no dark theme.
 - **metrics `@v3.34`** is not immutable; consider pinning a commit SHA later for supply-chain strictness.
 - **Scheduled runs** can be delayed by GitHub and auto-disable after 60 days of repo inactivity; `workflow_dispatch` remains as a manual fallback.
+
+## Implementation Deviations (2026-06-03)
+
+The shipped workflow refines the sequential single-job plan above:
+
+- **Matrix parallelism:** `metrics` runs one job per (card × theme) with `output_action: none`.
+  metrics (`use_prebuilt_image`) writes to `/metrics_renders/<filename>`, so each job copies the
+  SVG into `assets/metrics/` before `upload-artifact`. A single `commit` job
+  (`needs: [metrics, snake]`) downloads all artifacts (`pattern: metrics-*`, `merge-multiple`)
+  and commits once, avoiding parallel push races.
+- **Activity card removed:** the metrics v3.34 activity plugin crashes with
+  `TypeError: ...reading 'login'` on null-user events (unavoidable by config); isocalendar
+  covers contributions.
+- **Node 24 actions:** `upload-artifact@v7` / `download-artifact@v8` replace `@v4`.
+- **Secret:** stored as `GH_METRICS_TOKEN` (classic PAT).
+- **Verified:** light/dark confirmed on GitHub via emulation; the 6-hour schedule auto-commits.
