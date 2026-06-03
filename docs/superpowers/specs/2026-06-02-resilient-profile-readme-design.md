@@ -243,3 +243,21 @@ The design shipped with these refinements discovered during implementation:
   (most-starred) plus `_pinned`.
 - **Verified:** light and dark rendering confirmed on GitHub; the 6-hour schedule runs
   automatically and commits refreshed assets.
+
+## Migration to Active Tooling (2026-06-03)
+
+After shipping the metrics-based version, the activity, habits, and achievements plugins began
+rendering "Unexpected error" on the current GitHub API, and metrics proved to be **frozen** (last
+code commit 2023-12; fix PRs unmerged; the `@master` image is 2-year-old code). The profile was
+migrated off metrics to actively-maintained committed-SVG actions:
+
+- **github-readme-stats** (`stats-organization/github-readme-stats-action`): stats + top-languages.
+- **Auto-pinned top repositories:** a workflow step resolves the owner's most-starred public repos
+  via `gh api graphql` (`repositories orderBy {field: STARGAZERS, direction: DESC}`) and feeds the
+  names to the `pin` card — no manual repo list (replaces the metrics Repositories approximation).
+- **streak-stats** (`DenverCoder1/github-readme-streak-stats`): contribution streak.
+- **Platane/snk**: contribution snake (retained).
+- All generators use the built-in **GITHUB_TOKEN** (no PAT; `GH_METRICS_TOKEN` removed).
+- **Security hardening:** split into a read-only `generate` job and a `contents: write` `commit`
+  job (write isolated from third-party generators); every third-party action pinned to a commit SHA.
+- **Dropped** (no stable committed-SVG equivalent): isocalendar, achievements, activity, productive-time.

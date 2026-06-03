@@ -756,3 +756,16 @@ The shipped workflow refines the sequential single-job plan above:
 - **Node 24 actions:** `upload-artifact@v7` / `download-artifact@v8` replace `@v4`.
 - **Secret:** stored as `GH_METRICS_TOKEN` (classic PAT).
 - **Verified:** light/dark confirmed on GitHub via emulation; the 6-hour schedule auto-commits.
+
+## Migration to Active Tooling (2026-06-03)
+
+metrics turned out to be frozen (last code 2023-12; activity/habits/achievements crash on the current
+GitHub API; fix PRs unmerged). Migrated to actively-maintained committed-SVG actions:
+
+- `stats-organization/github-readme-stats-action` — stats + top-languages cards.
+- Auto-pinned top repos via `gh api graphql` (most-starred) feeding the `pin` card.
+- `DenverCoder1/github-readme-streak-stats` — streak. `Platane/snk` — snake (retained).
+- All use `GITHUB_TOKEN` (no PAT; `GH_METRICS_TOKEN` removed).
+- Security: read-only `generate` job + `contents: write` `commit` job (write isolation); all
+  third-party actions pinned to commit SHAs.
+- Dropped: isocalendar, achievements, activity, productive-time.
