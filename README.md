@@ -33,6 +33,13 @@ Software Engineer.
   </tr>
 </table>
 
+## 🔥 Streak
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/streak.dark.svg">
+  <img alt="GitHub streak" src="./assets/streak.light.svg">
+</picture>
+
 ## 🗂️ Top Repositories
 
 <table>

@@ -14,25 +14,25 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read              # least privilege; only the commit job elevates
 
 jobs:
-  build:
+  # ---- Generation: read-only token, third-party actions cannot write to the repo ----
+  generate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        with:
-          persist-credentials: true
 
-      # --- Resolve top repositories by stars (automatic, no manual list) ---
+      # Resolve top repositories by stars (automatic, no manual list)
       - name: Resolve top repositories by stars
         id: top
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          mkdir -p assets
           mapfile -t repos < <(gh api graphql -f query='
             query($login: String!) {
               user(login: $login) {
@@ -46,42 +46,42 @@ jobs:
           done
           echo "Resolved top repos: ${repos[*]:-none}"
 
-      # --- Stats card (light / dark) ---
+      # Stats card (light / dark)
       - name: Stats (dark)
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: stats
           options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&theme=github_dark
           path: assets/stats.dark.svg
       - name: Stats (light)
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: stats
           options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&theme=default
           path: assets/stats.light.svg
 
-      # --- Top languages card (light / dark) ---
+      # Top languages card (light / dark)
       - name: Top languages (dark)
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: top-langs
           options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=github_dark
           path: assets/top-langs.dark.svg
       - name: Top languages (light)
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: top-langs
           options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=default
           path: assets/top-langs.light.svg
 
-      # --- Pinned top repositories (auto, by stars) light / dark ---
+      # Pinned top repositories (auto, by stars) light / dark
       - name: Pin 0 (dark)
         if: steps.top.outputs.repo0 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -89,7 +89,7 @@ jobs:
           path: assets/pin-0.dark.svg
       - name: Pin 0 (light)
         if: steps.top.outputs.repo0 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -98,7 +98,7 @@ jobs:
 
       - name: Pin 1 (dark)
         if: steps.top.outputs.repo1 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -106,7 +106,7 @@ jobs:
           path: assets/pin-1.dark.svg
       - name: Pin 1 (light)
         if: steps.top.outputs.repo1 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -115,7 +115,7 @@ jobs:
 
       - name: Pin 2 (dark)
         if: steps.top.outputs.repo2 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -123,7 +123,7 @@ jobs:
           path: assets/pin-2.dark.svg
       - name: Pin 2 (light)
         if: steps.top.outputs.repo2 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -132,7 +132,7 @@ jobs:
 
       - name: Pin 3 (dark)
         if: steps.top.outputs.repo3 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
@@ -140,25 +140,64 @@ jobs:
           path: assets/pin-3.dark.svg
       - name: Pin 3 (light)
         if: steps.top.outputs.repo3 != ''
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           card: pin
           options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo3 }}&hide_border=true&theme=default
           path: assets/pin-3.light.svg
 
-      # --- Contribution snake (light / dark) ---
+      # Streak (light / dark) — GITHUB_TOKEN is enough for public contributions
+      - name: Streak (dark)
+        uses: DenverCoder1/github-readme-streak-stats@51cfb8879073b4c016ce6286016de0b14d179077  # v1.7.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          options: user=${{ github.repository_owner }}&theme=dark&hide_border=true&disable_animations=true
+          path: assets/streak.dark.svg
+      - name: Streak (light)
+        uses: DenverCoder1/github-readme-streak-stats@51cfb8879073b4c016ce6286016de0b14d179077  # v1.7.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          options: user=${{ github.repository_owner }}&theme=default&hide_border=true&disable_animations=true
+          path: assets/streak.light.svg
+
+      # Contribution snake (light / dark)
       - name: Contribution snake
-        uses: Platane/snk/svg-only@v3
+        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b  # v3
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             assets/snake.svg
             assets/snake-dark.svg?palette=github-dark
 
-      # --- Commit everything once (only if changed) ---
+      - name: Upload generated assets
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-assets
+          path: assets/
+          if-no-files-found: error
+          retention-days: 1
+
+  # ---- Commit: the only job with write access; runs only trusted actions ----
+  commit:
+    needs: generate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Download generated assets
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-assets
+          path: assets/
+
       - name: Commit generated assets
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9  # v7
         with:
           commit_message: "chore(profile): refresh generated cards [skip ci]"
           file_pattern: "assets/**"
