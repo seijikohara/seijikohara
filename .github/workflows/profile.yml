@@ -11,222 +11,156 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false   # let an in-flight refresh finish its commit
+  cancel-in-progress: false
 
 permissions:
-  contents: read              # generation jobs only read; commit job elevates below
+  contents: write
 
 jobs:
-  # ---- Parallel generation: one job per (card x theme) ----
-  metrics:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      fail-fast: false        # one failing card must not cancel the others
-      matrix:
-        include:
-          - { card: stats,        theme: light, fg: "#1f2328" }
-          - { card: stats,        theme: dark,  fg: "#c9d1d9" }
-          - { card: languages,    theme: light, fg: "#1f2328" }
-          - { card: languages,    theme: dark,  fg: "#c9d1d9" }
-          - { card: isocalendar,  theme: light, fg: "#1f2328" }
-          - { card: isocalendar,  theme: dark,  fg: "#c9d1d9" }
-          - { card: habits,       theme: light, fg: "#1f2328" }
-          - { card: habits,       theme: dark,  fg: "#c9d1d9" }
-          - { card: achievements, theme: light, fg: "#1f2328" }
-          - { card: achievements, theme: dark,  fg: "#c9d1d9" }
-          - { card: repositories, theme: light, fg: "#1f2328" }
-          - { card: repositories, theme: dark,  fg: "#c9d1d9" }
-    steps:
-      - name: Stats
-        if: ${{ matrix.card == 'stats' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: header, activity, community, repositories, metadata
-          base_indepth: yes
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      - name: Languages
-        if: ${{ matrix.card == 'languages' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_languages: yes
-          plugin_languages_indepth: yes
-          plugin_languages_sections: most-used
-          plugin_languages_details: bytes-size, percentage
-          plugin_languages_limit: 8
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      - name: Isocalendar
-        if: ${{ matrix.card == 'isocalendar' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      - name: Habits
-        if: ${{ matrix.card == 'habits' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_habits: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 14
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_habits_trim: yes
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      - name: Achievements
-        if: ${{ matrix.card == 'achievements' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_achievements: yes
-          plugin_achievements_threshold: C
-          plugin_achievements_secrets: yes
-          plugin_achievements_display: detailed
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      - name: Repositories
-        if: ${{ matrix.card == 'repositories' }}
-        uses: lowlighter/metrics@v3.34
-        with:
-          token: ${{ secrets.GH_METRICS_TOKEN }}
-          filename: ${{ matrix.card }}.${{ matrix.theme }}.svg
-          output_action: none
-          base: ""
-          config_animations: "no"
-          config_timezone: Asia/Tokyo
-          config_base64: yes
-          plugin_repositories: yes
-          plugin_repositories_starred: 4
-          plugin_repositories_pinned: 2
-          plugin_repositories_order: featured, pinned, starred, random
-          extras_css: |
-            :root, body, svg, foreignObject { background: transparent !important; }
-            .background, rect.background { fill: transparent !important; }
-            h2, h2.field, .field, text, tspan, .value, th, td { fill: ${{ matrix.fg }} !important; color: ${{ matrix.fg }} !important; }
-
-      # metrics (use_prebuilt_image) writes to /metrics_renders/<filename>, NOT the
-      # workspace, when output_action is none. Recover the SVG into the workspace.
-      - name: Collect generated SVG into workspace
-        run: |
-          set -euo pipefail
-          mkdir -p assets/metrics
-          src="/metrics_renders/${{ matrix.card }}.${{ matrix.theme }}.svg"
-          dst="assets/metrics/${{ matrix.card }}.${{ matrix.theme }}.svg"
-          echo "Renders dir contents:" && sudo ls -la /metrics_renders || true
-          sudo cp "$src" "$dst"
-          sudo chown "$(id -u):$(id -g)" "$dst"
-          ls -la assets/metrics/
-
-      - name: Upload card artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: metrics-${{ matrix.card }}-${{ matrix.theme }}
-          path: assets/metrics/${{ matrix.card }}.${{ matrix.theme }}.svg
-          if-no-files-found: error
-          retention-days: 1
-
-  # ---- Parallel generation: contribution snake ----
-  snake:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Generate contribution snake (light + dark)
-        uses: Platane/snk/svg-only@v3
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            assets/snake/snake.svg
-            assets/snake/snake-dark.svg?palette=github-dark
-
-      - name: Upload snake artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: snake
-          path: assets/snake
-          if-no-files-found: error
-          retention-days: 1
-
-  # ---- Single aggregation commit (avoids parallel push races) ----
-  commit:
-    needs: [metrics, snake]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           persist-credentials: true
 
-      - name: Download metrics artifacts
-        uses: actions/download-artifact@v8
-        with:
-          pattern: metrics-*
-          path: assets/metrics
-          merge-multiple: true
+      # --- Resolve top repositories by stars (automatic, no manual list) ---
+      - name: Resolve top repositories by stars
+        id: top
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mapfile -t repos < <(gh api graphql -f query='
+            query($login: String!) {
+              user(login: $login) {
+                repositories(first: 4, ownerAffiliations: OWNER, privacy: PUBLIC, isFork: false, orderBy: {field: STARGAZERS, direction: DESC}) {
+                  nodes { name }
+                }
+              }
+            }' -f login="${{ github.repository_owner }}" --jq '.data.user.repositories.nodes[].name')
+          for i in 0 1 2 3; do
+            echo "repo$i=${repos[$i]:-}" >> "$GITHUB_OUTPUT"
+          done
+          echo "Resolved top repos: ${repos[*]:-none}"
 
-      - name: Download snake artifact
-        uses: actions/download-artifact@v8
+      # --- Stats card (light / dark) ---
+      - name: Stats (dark)
+        uses: stats-organization/github-readme-stats-action@v2
         with:
-          name: snake
-          path: assets/snake
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&theme=github_dark
+          path: assets/stats.dark.svg
+      - name: Stats (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&theme=default
+          path: assets/stats.light.svg
 
+      # --- Top languages card (light / dark) ---
+      - name: Top languages (dark)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: top-langs
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=github_dark
+          path: assets/top-langs.dark.svg
+      - name: Top languages (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: top-langs
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=default
+          path: assets/top-langs.light.svg
+
+      # --- Pinned top repositories (auto, by stars) light / dark ---
+      - name: Pin 0 (dark)
+        if: steps.top.outputs.repo0 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo0 }}&hide_border=true&theme=github_dark
+          path: assets/pin-0.dark.svg
+      - name: Pin 0 (light)
+        if: steps.top.outputs.repo0 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo0 }}&hide_border=true&theme=default
+          path: assets/pin-0.light.svg
+
+      - name: Pin 1 (dark)
+        if: steps.top.outputs.repo1 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo1 }}&hide_border=true&theme=github_dark
+          path: assets/pin-1.dark.svg
+      - name: Pin 1 (light)
+        if: steps.top.outputs.repo1 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo1 }}&hide_border=true&theme=default
+          path: assets/pin-1.light.svg
+
+      - name: Pin 2 (dark)
+        if: steps.top.outputs.repo2 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo2 }}&hide_border=true&theme=github_dark
+          path: assets/pin-2.dark.svg
+      - name: Pin 2 (light)
+        if: steps.top.outputs.repo2 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo2 }}&hide_border=true&theme=default
+          path: assets/pin-2.light.svg
+
+      - name: Pin 3 (dark)
+        if: steps.top.outputs.repo3 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo3 }}&hide_border=true&theme=github_dark
+          path: assets/pin-3.dark.svg
+      - name: Pin 3 (light)
+        if: steps.top.outputs.repo3 != ''
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          card: pin
+          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo3 }}&hide_border=true&theme=default
+          path: assets/pin-3.light.svg
+
+      # --- Contribution snake (light / dark) ---
+      - name: Contribution snake
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            assets/snake.svg
+            assets/snake-dark.svg?palette=github-dark
+
+      # --- Commit everything once (only if changed) ---
       - name: Commit generated assets
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "chore(profile): refresh generated assets [skip ci]"
+          commit_message: "chore(profile): refresh generated cards [skip ci]"
           file_pattern: "assets/**"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"

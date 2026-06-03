@@ -20,55 +20,57 @@ Software Engineer.
   <tr>
     <td width="50%">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/stats.dark.svg">
-        <img alt="GitHub stats" src="./assets/metrics/stats.light.svg" width="100%">
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/stats.dark.svg">
+        <img alt="GitHub stats" src="./assets/stats.light.svg" width="100%">
       </picture>
     </td>
     <td width="50%">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/languages.dark.svg">
-        <img alt="Top languages" src="./assets/metrics/languages.light.svg" width="100%">
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/top-langs.dark.svg">
+        <img alt="Top languages" src="./assets/top-langs.light.svg" width="100%">
       </picture>
     </td>
   </tr>
 </table>
 
-## 🔥 Activity
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/isocalendar.dark.svg">
-  <img alt="Contribution calendar" src="./assets/metrics/isocalendar.light.svg">
-</picture>
+## 🗂️ Top Repositories
 
 <table>
   <tr>
     <td width="50%">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/habits.dark.svg">
-        <img alt="Coding habits" src="./assets/metrics/habits.light.svg" width="100%">
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-0.dark.svg">
+        <img alt="Top repository 1" src="./assets/pin-0.light.svg" width="100%">
       </picture>
     </td>
     <td width="50%">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/achievements.dark.svg">
-        <img alt="Achievements" src="./assets/metrics/achievements.light.svg" width="100%">
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-1.dark.svg">
+        <img alt="Top repository 2" src="./assets/pin-1.light.svg" width="100%">
+      </picture>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-2.dark.svg">
+        <img alt="Top repository 3" src="./assets/pin-2.light.svg" width="100%">
+      </picture>
+    </td>
+    <td width="50%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-3.dark.svg">
+        <img alt="Top repository 4" src="./assets/pin-3.light.svg" width="100%">
       </picture>
     </td>
   </tr>
 </table>
 
-## 🗂️ Repositories
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/metrics/repositories.dark.svg">
-  <img alt="Repositories" src="./assets/metrics/repositories.light.svg">
-</picture>
-
 ## 🐍 Contribution Snake
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/snake/snake-dark.svg">
-  <img alt="Contribution snake animation" src="./assets/snake/snake.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/snake-dark.svg">
+  <img alt="Contribution snake animation" src="./assets/snake.svg">
 </picture>
 
 ---
