@@ -40,44 +40,18 @@ Software Engineer.
   <img alt="GitHub streak" src="./assets/streak.light.svg">
 </picture>
 
-## 🗂️ Top Repositories
-
-<table>
-  <tr>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-0.dark.svg">
-        <img alt="Top repository 1" src="./assets/pin-0.light.svg" width="100%">
-      </picture>
-    </td>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-1.dark.svg">
-        <img alt="Top repository 2" src="./assets/pin-1.light.svg" width="100%">
-      </picture>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-2.dark.svg">
-        <img alt="Top repository 3" src="./assets/pin-2.light.svg" width="100%">
-      </picture>
-    </td>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/pin-3.dark.svg">
-        <img alt="Top repository 4" src="./assets/pin-3.light.svg" width="100%">
-      </picture>
-    </td>
-  </tr>
-</table>
-
-## 🐍 Contribution Snake
+## 📈 Overview
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/snake-dark.svg">
-  <img alt="Contribution snake animation" src="./assets/snake.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/userstats.dark.svg">
+  <img alt="Cross-repository languages and lifetime contribution totals" src="./assets/userstats.light.svg">
+</picture>
+
+## 🕹️ Contribution Pac-Man
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/pacman.dark.svg">
+  <img alt="Pac-Man contribution graph" src="./assets/pacman.light.svg">
 </picture>
 
 ---

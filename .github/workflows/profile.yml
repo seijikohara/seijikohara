@@ -23,30 +23,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5   # required by user-statistician (derives owner from the repo)
 
-      # Resolve top repositories by stars (automatic, no manual list)
-      - name: Resolve top repositories by stars
-        id: top
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          mkdir -p assets
-          mapfile -t repos < <(gh api graphql -f query='
-            query($login: String!) {
-              user(login: $login) {
-                repositories(first: 4, ownerAffiliations: OWNER, privacy: PUBLIC, isFork: false, orderBy: {field: STARGAZERS, direction: DESC}) {
-                  nodes { name }
-                }
-              }
-            }' -f login="${{ github.repository_owner }}" --jq '.data.user.repositories.nodes[].name')
-          for i in 0 1 2 3; do
-            echo "repo$i=${repos[$i]:-}" >> "$GITHUB_OUTPUT"
-          done
-          echo "Resolved top repos: ${repos[*]:-none}"
-
-      # Stats card (light / dark)
+      # Stats card (light / dark) — github-readme-stats
       - name: Stats (dark)
         uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
         with:
@@ -78,75 +57,6 @@ jobs:
           options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=default
           path: assets/top-langs.light.svg
 
-      # Pinned top repositories (auto, by stars) light / dark
-      - name: Pin 0 (dark)
-        if: steps.top.outputs.repo0 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo0 }}&hide_border=true&theme=github_dark
-          path: assets/pin-0.dark.svg
-      - name: Pin 0 (light)
-        if: steps.top.outputs.repo0 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo0 }}&hide_border=true&theme=default
-          path: assets/pin-0.light.svg
-
-      - name: Pin 1 (dark)
-        if: steps.top.outputs.repo1 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo1 }}&hide_border=true&theme=github_dark
-          path: assets/pin-1.dark.svg
-      - name: Pin 1 (light)
-        if: steps.top.outputs.repo1 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo1 }}&hide_border=true&theme=default
-          path: assets/pin-1.light.svg
-
-      - name: Pin 2 (dark)
-        if: steps.top.outputs.repo2 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo2 }}&hide_border=true&theme=github_dark
-          path: assets/pin-2.dark.svg
-      - name: Pin 2 (light)
-        if: steps.top.outputs.repo2 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo2 }}&hide_border=true&theme=default
-          path: assets/pin-2.light.svg
-
-      - name: Pin 3 (dark)
-        if: steps.top.outputs.repo3 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo3 }}&hide_border=true&theme=github_dark
-          path: assets/pin-3.dark.svg
-      - name: Pin 3 (light)
-        if: steps.top.outputs.repo3 != ''
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: pin
-          options: username=${{ github.repository_owner }}&repo=${{ steps.top.outputs.repo3 }}&hide_border=true&theme=default
-          path: assets/pin-3.light.svg
-
       # Streak (light / dark) — GITHUB_TOKEN is enough for public contributions
       - name: Streak (dark)
         uses: DenverCoder1/github-readme-streak-stats@51cfb8879073b4c016ce6286016de0b14d179077  # v1.7.0
@@ -161,14 +71,38 @@ jobs:
           options: user=${{ github.repository_owner }}&theme=default&hide_border=true&disable_animations=true
           path: assets/streak.light.svg
 
-      # Contribution snake (light / dark)
-      - name: Contribution snake
-        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b  # v3
+      # Aggregate overview (cross-repo languages + lifetime totals) — user-statistician, write-only
+      - name: Overview stats (light)
+        uses: cicirello/user-statistician@6a7e459d1174b5822afa99a7c6acccf376cb2eb1  # v1.25.0
+        with:
+          commit-and-push: false
+          colors: light
+          image-file: assets/userstats.light.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Overview stats (dark)
+        uses: cicirello/user-statistician@6a7e459d1174b5822afa99a7c6acccf376cb2eb1  # v1.25.0
+        with:
+          commit-and-push: false
+          colors: dark
+          image-file: assets/userstats.dark.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Pac-Man contribution graph (write-only; emits both light/dark into dist/)
+      - name: Pac-Man contribution graph
+        uses: abozanona/pacman-contribution-graph@d258e3fb01511c1ff4fe6418408ede37b2ad4935  # v5.0.0
         with:
           github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            assets/snake.svg
-            assets/snake-dark.svg?palette=github-dark
+          games: pacman
+
+      - name: Collect Pac-Man SVGs into assets
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          cp dist/pacman-contribution-graph.svg assets/pacman.light.svg
+          cp dist/pacman-contribution-graph-dark.svg assets/pacman.dark.svg
+          ls -la assets/
 
       - name: Upload generated assets
         uses: actions/upload-artifact@v7
