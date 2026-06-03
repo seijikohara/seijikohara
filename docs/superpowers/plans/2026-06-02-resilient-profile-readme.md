@@ -769,3 +769,9 @@ GitHub API; fix PRs unmerged). Migrated to actively-maintained committed-SVG act
 - Security: read-only `generate` job + `contents: write` `commit` job (write isolation); all
   third-party actions pinned to commit SHAs.
 - Dropped: isocalendar, achievements, activity, productive-time.
+
+### Final metric set (2026-06-03)
+Removed Top Repositories pin (duplicates GitHub native pinned/popular). Replaced snake with Pac-Man
+(`abozanona/pacman-contribution-graph`, write-only). Added user-statistician (`cicirello/user-statistician`,
+`commit-and-push: false`, cross-repo languages + lifetime totals). Final cards: Stats, Top Languages, Streak,
+Overview (user-statistician), Pac-Man — all GITHUB_TOKEN, SHA-pinned, read-only generate + write-isolated commit.

@@ -261,3 +261,13 @@ migrated off metrics to actively-maintained committed-SVG actions:
 - **Security hardening:** split into a read-only `generate` job and a `contents: write` `commit`
   job (write isolated from third-party generators); every third-party action pinned to a commit SHA.
 - **Dropped** (no stable committed-SVG equivalent): isocalendar, achievements, activity, productive-time.
+
+### Final metric set (2026-06-03)
+
+After review the Top Repositories `pin` cards were removed (they duplicate GitHub's native
+pinned/popular repositories). Snake was replaced with **Pac-Man** (`abozanona/pacman-contribution-graph`,
+write-only into `dist/`, GITHUB_TOKEN). **user-statistician** (`cicirello/user-statistician`) was added
+for a cross-repo language rollup plus lifetime commits/PRs/issues/reviews, run with `commit-and-push: false`
+(write-only) so it fits the read-only generate job. WakaTime was offered (the one metric GitHub never shows)
+but declined. Final cards: **Stats, Top Languages, Streak, Overview (user-statistician), Pac-Man** — all
+GITHUB_TOKEN-only, SHA-pinned, generated in a read-only job and committed by the write-isolated commit job.
