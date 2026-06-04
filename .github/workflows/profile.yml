@@ -92,6 +92,13 @@ jobs:
       # Pac-Man contribution graph (write-only; emits both light/dark into dist/)
       - name: Pac-Man contribution graph
         uses: abozanona/pacman-contribution-graph@d258e3fb01511c1ff4fe6418408ede37b2ad4935  # v5.0.0
+        env:
+          # Run on Node.js 24: clears the Node 20 deprecation warning and pre-empts
+          # the forced migration on June 16th, 2026.
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+          # Raise the V8 heap ceiling above the ~4GB default; SVG generation OOMs
+          # under it. The ubuntu-latest runner has 16GB RAM, so 8GB is safe.
+          NODE_OPTIONS: --max-old-space-size=8192
         with:
           github_user_name: ${{ github.repository_owner }}
           games: pacman
