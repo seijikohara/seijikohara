@@ -8,6 +8,7 @@ Software Engineer.
 [![LAPRAS](https://img.shields.io/badge/LAPRAS-00A0E9?style=for-the-badge&logo=lapras&logoColor=white)](https://lapras.com/public/seijikohara)
 [![Wantedly](https://img.shields.io/badge/Wantedly-21BDDB?style=for-the-badge&logo=wantedly&logoColor=white)](https://www.wantedly.com/id/seiji_kohara)
 [![Qiita](https://img.shields.io/badge/Qiita-55C500?style=for-the-badge&logo=qiita&logoColor=white)](http://qiita.com/seijikohara)
+[![Zenn](https://img.shields.io/badge/Zenn-3EA8FF?style=for-the-badge&logo=zenn&logoColor=white)](https://zenn.dev/seijikohara)
 
 ## 📦 Packages
 
