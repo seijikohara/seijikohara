@@ -9,7 +9,7 @@
         aria-labelledby="descId"
       >
         <title id="titleId">Seiji Kohara's GitHub Stats, Rank: A</title>
-        <desc id="descId">Total Stars Earned: 80, Total Commits  : 2865, Total PRs: 1376, Total Issues: 347, Contributed to (last year): 6</desc>
+        <desc id="descId">Total Stars Earned: 80, Total Commits  : 2866, Total PRs: 1376, Total Issues: 347, Contributed to (last year): 6</desc>
         <style>
           .header {
             font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
@@ -73,7 +73,7 @@
         stroke-dashoffset: 251.32741228718345;
       }
       to {
-        stroke-dashoffset: 52.35857506503517;
+        stroke-dashoffset: 52.354591126527275;
       }
     }
   
