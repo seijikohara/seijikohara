@@ -2,60 +2,36 @@
 
 Software Engineer.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/seijikohara/)
-[![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/seiji.khr/)
-[![Findy](https://img.shields.io/badge/Findy-056dc1?style=for-the-badge&logoColor=white)](https://findy-code.io/skills-share/y0erzwXymYuaZ)
-[![LAPRAS](https://img.shields.io/badge/LAPRAS-00A0E9?style=for-the-badge&logo=lapras&logoColor=white)](https://lapras.com/public/seijikohara)
-[![Wantedly](https://img.shields.io/badge/Wantedly-21BDDB?style=for-the-badge&logo=wantedly&logoColor=white)](https://www.wantedly.com/id/seiji_kohara)
-[![Qiita](https://img.shields.io/badge/Qiita-55C500?style=for-the-badge&logo=qiita&logoColor=white)](http://qiita.com/seijikohara)
-[![Zenn](https://img.shields.io/badge/Zenn-3EA8FF?style=for-the-badge&logo=zenn&logoColor=white)](https://zenn.dev/seijikohara)
-
-## 📦 Packages
-
-[![Maven Central](https://img.shields.io/badge/Maven_Central-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://central.sonatype.com/namespace/io.github.seijikohara)
-[![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/~seijikohara)
-
-## 📊 Stats
-
-<table>
-  <tr>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/stats.dark.svg">
-        <img alt="GitHub stats" src="./assets/stats.light.svg" width="100%">
-      </picture>
-    </td>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./assets/top-langs.dark.svg">
-        <img alt="Top languages" src="./assets/top-langs.light.svg" width="100%">
-      </picture>
-    </td>
-  </tr>
-</table>
-
-## 🔥 Streak
+<p>
+  <a href="https://www.linkedin.com/in/seijikohara/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/linkedin.dark.svg"><img alt="LinkedIn" src="./assets/badges/linkedin.light.svg"></picture></a>
+  <a href="https://www.facebook.com/seiji.khr/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/facebook.dark.svg"><img alt="Facebook" src="./assets/badges/facebook.light.svg"></picture></a>
+  <a href="https://findy-code.io/skills-share/y0erzwXymYuaZ"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/findy.dark.svg"><img alt="Findy" src="./assets/badges/findy.light.svg"></picture></a>
+  <a href="https://lapras.com/public/seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/lapras.dark.svg"><img alt="LAPRAS" src="./assets/badges/lapras.light.svg"></picture></a>
+  <a href="https://www.wantedly.com/id/seiji_kohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/wantedly.dark.svg"><img alt="Wantedly" src="./assets/badges/wantedly.light.svg"></picture></a>
+  <a href="https://qiita.com/seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/qiita.dark.svg"><img alt="Qiita" src="./assets/badges/qiita.light.svg"></picture></a>
+  <a href="https://zenn.dev/seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/zenn.dark.svg"><img alt="Zenn" src="./assets/badges/zenn.light.svg"></picture></a>
+</p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/streak.dark.svg">
-  <img alt="GitHub streak" src="./assets/streak.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/overview.dark.svg">
+  <img alt="Overview: lifetime and current-year contributions, stars, followers, merged pull requests, issues, repositories, and contributions by year" src="./assets/overview.light.svg" width="100%">
 </picture>
-
-## 📈 Overview
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/userstats.dark.svg">
-  <img alt="Cross-repository languages and lifetime contribution totals" src="./assets/userstats.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/contributions.dark.svg">
+  <img alt="Contributions: current and longest streaks, with the past 12 months as an isometric 3D calendar" src="./assets/contributions.light.svg" width="100%">
 </picture>
-
-## 🕹️ Contribution Pac-Man
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/pacman.dark.svg">
-  <img alt="Pac-Man contribution graph" src="./assets/pacman.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/languages.dark.svg">
+  <img alt="Languages: share of public source code by bytes" src="./assets/languages.light.svg" width="100%">
 </picture>
 
----
+### Packages
 
-[![GitHub followers](https://img.shields.io/github/followers/seijikohara?style=for-the-badge&logo=github)](https://github.com/seijikohara)
-[![GitHub User's stars](https://img.shields.io/github/stars/seijikohara?affiliations=OWNER%2CCOLLABORATOR&style=for-the-badge&logo=github)](https://github.com/seijikohara)
+<p>
+  <a href="https://central.sonatype.com/namespace/io.github.seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/maven-central.dark.svg"><img alt="Maven Central" src="./assets/badges/maven-central.light.svg"></picture></a>
+  <a href="https://www.npmjs.com/~seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/npm.dark.svg"><img alt="npm" src="./assets/badges/npm.light.svg"></picture></a>
+</p>
+
+<sub>Cards are static SVGs regenerated every 6 hours by <a href=".github/workflows/profile.yml">a dependency-free workflow</a> in this repository.</sub>

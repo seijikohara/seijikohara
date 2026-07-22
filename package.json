@@ -1,0 +1,27 @@
+{
+  "name": "seijikohara-profile",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-contained generator for the profile README cards. Runtime uses Node.js built-ins only; all packages here are development tooling.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "generate": "node src/main.ts",
+    "badges": "node scripts/generate-badges.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "dev": "vite preview-app"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "oxlint": "^1.75.0",
+    "simple-icons": "^16.27.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
+  },
+  "packageManager": "pnpm@11.15.1"
+}

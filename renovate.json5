@@ -1,7 +1,8 @@
 {
   // Shared Renovate policy across seijikohara repositories.
-  // This repository only ships GitHub Actions workflows, so Renovate is scoped
-  // to the github-actions manager.
+  // Managers: npm (pnpm-lock.yaml + packageManager for the card generator's
+  // dev tooling) and github-actions (guards against reintroduced `uses:` —
+  // the workflows themselves are action-free by design).
   // Schema: https://docs.renovatebot.com/renovate-schema.json
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
@@ -19,7 +20,7 @@
   timezone: "Asia/Tokyo",
   schedule: ["before 9am on monday"],
   labels: ["dependencies"],
-  enabledManagers: ["github-actions"],
+  enabledManagers: ["github-actions", "npm"],
   // Keep update branches rebased on main and merge via rebase once CI passes.
   rebaseWhen: "behind-base-branch",
   platformAutomerge: true,
