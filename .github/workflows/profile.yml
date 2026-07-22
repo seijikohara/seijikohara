@@ -1,146 +1,106 @@
+# Refreshes the committed profile cards on a schedule.
+#
+# Deliberately uses ZERO actions (`uses:`): every past outage of this pipeline
+# came from third-party actions (OOM in pacman-contribution-graph, GraphQL
+# resource-limit failures in user-statistician). The generator itself runs on
+# Node.js built-ins with no npm dependencies, so the scheduled path has no
+# third-party code at all.
 name: Profile
 
 on:
   schedule:
-    - cron: "17 */6 * * *"   # every 6h, offset off the top of the hour
+    - cron: "17 */6 * * *" # offset from the top of the hour (documented high-load window)
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/profile.yml"
+
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-permissions:
-  contents: read              # least privilege; only the commit job elevates
-
 jobs:
-  # ---- Generation: read-only token, third-party actions cannot write to the repo ----
-  generate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5   # required by user-statistician (derives owner from the repo)
-
-      # Stats card (light / dark) — github-readme-stats
-      - name: Stats (dark)
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&theme=github_dark
-          path: assets/stats.dark.svg
-      - name: Stats (light)
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_border=true&theme=default
-          path: assets/stats.light.svg
-
-      # Top languages card (light / dark)
-      - name: Top languages (dark)
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: top-langs
-          options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=github_dark
-          path: assets/top-langs.dark.svg
-      - name: Top languages (light)
-        uses: stats-organization/github-readme-stats-action@8614f3a61601854731381d853f8566867754a5ca  # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          card: top-langs
-          options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&hide_border=true&theme=default
-          path: assets/top-langs.light.svg
-
-      # Streak (light / dark) — GITHUB_TOKEN is enough for public contributions
-      - name: Streak (dark)
-        uses: DenverCoder1/github-readme-streak-stats@51cfb8879073b4c016ce6286016de0b14d179077  # v1.7.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          options: user=${{ github.repository_owner }}&theme=dark&hide_border=true&disable_animations=true
-          path: assets/streak.dark.svg
-      - name: Streak (light)
-        uses: DenverCoder1/github-readme-streak-stats@51cfb8879073b4c016ce6286016de0b14d179077  # v1.7.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          options: user=${{ github.repository_owner }}&theme=default&hide_border=true&disable_animations=true
-          path: assets/streak.light.svg
-
-      # Aggregate overview (cross-repo languages + lifetime totals) — user-statistician, write-only
-      - name: Overview stats (light)
-        uses: cicirello/user-statistician@6a7e459d1174b5822afa99a7c6acccf376cb2eb1  # v1.25.0
-        with:
-          commit-and-push: false
-          colors: light
-          image-file: assets/userstats.light.svg
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Overview stats (dark)
-        uses: cicirello/user-statistician@6a7e459d1174b5822afa99a7c6acccf376cb2eb1  # v1.25.0
-        with:
-          commit-and-push: false
-          colors: dark
-          image-file: assets/userstats.dark.svg
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Pac-Man contribution graph (write-only; emits both light/dark into dist/)
-      - name: Pac-Man contribution graph
-        uses: abozanona/pacman-contribution-graph@d258e3fb01511c1ff4fe6418408ede37b2ad4935  # v5.0.0
-        env:
-          # Run on Node.js 24: clears the Node 20 deprecation warning and pre-empts
-          # the forced migration on June 16th, 2026.
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-          # Raise the V8 heap ceiling above the ~4GB default; SVG generation OOMs
-          # under it. The ubuntu-latest runner has 16GB RAM, so 8GB is safe.
-          NODE_OPTIONS: --max-old-space-size=8192
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          games: pacman
-
-      - name: Collect Pac-Man SVGs into assets
-        run: |
-          set -euo pipefail
-          mkdir -p assets
-          cp dist/pacman-contribution-graph.svg assets/pacman.light.svg
-          cp dist/pacman-contribution-graph-dark.svg assets/pacman.dark.svg
-          ls -la assets/
-
-      - name: Upload generated assets
-        uses: actions/upload-artifact@v7
-        with:
-          name: generated-assets
-          path: assets/
-          if-no-files-found: error
-          retention-days: 1
-
-  # ---- Commit: the only job with write access; runs only trusted actions ----
-  commit:
-    needs: generate
-    runs-on: ubuntu-latest
+  refresh:
+    runs-on: ubuntu-24.04 # pinned: ubuntu-latest will eventually move to 26.04
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: true
+      - name: Select Node.js 24 from the hosted toolcache
+        run: |
+          set -euo pipefail
+          # `|| true` keeps set -e from aborting on a glob miss, so the
+          # nodejs.org fallback below stays reachable.
+          node_bin="$(ls -d "${RUNNER_TOOL_CACHE:-/opt/hostedtoolcache}"/node/24.*/x64/bin 2>/dev/null | sort -V | tail -n 1 || true)"
+          if [ -z "${node_bin}" ]; then
+            echo "Node 24 not in toolcache; falling back to checksum-verified nodejs.org download" >&2
+            cd "${RUNNER_TEMP}"
+            curl -fsSLO https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt
+            tarball="$(grep -o 'node-v24[^ ]*-linux-x64\.tar\.xz' SHASUMS256.txt | head -n 1)"
+            curl -fsSLO "https://nodejs.org/dist/latest-v24.x/${tarball}"
+            grep " ${tarball}\$" SHASUMS256.txt | sha256sum -c -
+            mkdir -p node24
+            tar -xJf "${tarball}" -C node24 --strip-components=1
+            node_bin="${RUNNER_TEMP}/node24/bin"
+          fi
+          "${node_bin}/node" --version
+          echo "${node_bin}" >> "${GITHUB_PATH}"
 
-      - name: Download generated assets
-        uses: actions/download-artifact@v8
-        with:
-          name: generated-assets
-          path: assets/
+      - name: Clone repository
+        # x-access-token is the documented username for the installation access
+        # token GITHUB_TOKEN is. The credential lives only in this job's
+        # ephemeral runner and expires when the job ends.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch "${GITHUB_REF_NAME}" \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
 
-      - name: Commit generated assets
-        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9  # v7
-        with:
-          commit_message: "chore(profile): refresh generated cards [skip ci]"
-          file_pattern: "assets/**"
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Generate cards
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: repo
+        run: node src/main.ts
+
+      - name: Commit and push refreshed assets
+        # GITHUB_TOKEN pushes never retrigger workflows; [skip ci] is
+        # defense-in-depth in case the token type ever changes.
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          git add assets
+          if git diff --cached --quiet; then
+            echo "No asset changes; skipping commit."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "chore(profile): refresh generated cards [skip ci]"
+          # The branch can advance while the generator runs (Renovate, manual
+          # pushes); rebase the asset commit and retry instead of failing.
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            echo "Push attempt ${attempt} rejected; rebasing onto the latest ${GITHUB_REF_NAME}" >&2
+            git fetch origin "${GITHUB_REF_NAME}"
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                rebase FETCH_HEAD
+          done
+          echo "Failed to push after 3 attempts" >&2
+          exit 1
+
+  keepalive:
+    # Public-repo schedules are disabled after 60 days without "repository
+    # activity", and GitHub does not document whether bot commits count.
+    # Re-enabling the workflow is the documented reset, so do it every run.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      - name: Reset the scheduled-workflow inactivity timer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow enable profile.yml --repo "${GITHUB_REPOSITORY}"

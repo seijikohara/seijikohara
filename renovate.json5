@@ -1,7 +1,8 @@
 {
   // Shared Renovate policy across seijikohara repositories.
-  // This repository only ships GitHub Actions workflows, so Renovate is scoped
-  // to the github-actions manager.
+  // Managers: npm (pnpm-lock.yaml + packageManager for the card generator's
+  // dev tooling) and github-actions (guards against reintroduced `uses:` —
+  // the workflows themselves are action-free by design).
   // Schema: https://docs.renovatebot.com/renovate-schema.json
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
@@ -12,14 +13,11 @@
     ":semanticCommits",
     ":semanticCommitTypeAll(chore)",
     ":semanticCommitScope(deps)",
-    // Keep npm semver ranges (the committed lockfile gives reproducibility); overrides
-    // best-practices dev-dependency pinning. Action digest pinning is unaffected.
-    ":preserveSemverRanges",
   ],
   timezone: "Asia/Tokyo",
   schedule: ["before 9am on monday"],
   labels: ["dependencies"],
-  enabledManagers: ["github-actions"],
+  enabledManagers: ["github-actions", "npm"],
   // Keep update branches rebased on main and merge via rebase once CI passes.
   rebaseWhen: "behind-base-branch",
   platformAutomerge: true,
@@ -28,8 +26,17 @@
   minimumReleaseAge: "3 days",
   packageRules: [
     {
+      // Keep semver ranges in package.json but still deliver in-range updates
+      // by bumping pnpm-lock.yaml (":preserveSemverRanges"'s replace strategy
+      // would silently skip every in-range release). Overrides best-practices
+      // dev-dependency pinning; action digest pinning is unaffected.
+      description: "Update the lockfile within existing ranges",
+      matchManagers: ["npm"],
+      rangeStrategy: "update-lockfile",
+    },
+    {
       description: "Auto-merge non-major updates once CI passes",
-      matchUpdateTypes: ["minor", "patch", "pin", "pinDigest", "digest"],
+      matchUpdateTypes: ["minor", "patch", "pin", "pinDigest", "digest", "lockFileUpdate"],
       automerge: true,
     },
     {

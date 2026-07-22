@@ -1,3 +1,6 @@
+# Dependencies
+node_modules/
+
 # Visual brainstorming companion (local-only, not part of the profile)
 .superpowers/
 
