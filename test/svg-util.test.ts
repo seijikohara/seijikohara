@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { el, esc, num } from "../src/svg/dsl.ts";
 import {
   formatCompact,
+  formatDate,
+  formatDateRange,
   formatInt,
   formatUtcTimestamp,
   measureMono,
@@ -56,6 +58,14 @@ describe("formatting", () => {
   it("formats UTC timestamps to minute precision", () => {
     expect(formatUtcTimestamp("2026-07-22T03:17:45.123Z")).toBe("2026-07-22 03:17 UTC");
     expect(() => formatUtcTimestamp("not a date")).toThrow(/invalid ISO/);
+  });
+  it("formats dates and ranges, collapsing shared years", () => {
+    expect(formatDate("2026-07-22", true)).toBe("Jul 22, 2026");
+    expect(formatDate("2026-01-05", false)).toBe("Jan 5");
+    expect(formatDateRange("2026-05-31", "2026-07-22")).toBe("May 31 – Jul 22, 2026");
+    expect(formatDateRange("2025-12-30", "2026-02-19")).toBe("Dec 30, 2025 – Feb 19, 2026");
+    expect(formatDateRange("2026-07-22", "2026-07-22")).toBe("Jul 22, 2026");
+    expect(() => formatDate("2026-13-99", true)).toThrow(/invalid calendar date/);
   });
 });
 

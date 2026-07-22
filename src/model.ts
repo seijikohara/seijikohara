@@ -59,8 +59,17 @@ export interface ProfileData {
   readonly generatedAt: string;
 }
 
+export interface DateRange {
+  /** ISO dates, inclusive. */
+  readonly start: string;
+  readonly end: string;
+}
+
 export interface Streaks {
   /** Consecutive active days ending at the calendar's last day (or the day before). */
   readonly current: number;
   readonly longest: number;
+  /** Undefined when the corresponding streak is 0. */
+  readonly currentRange: DateRange | undefined;
+  readonly longestRange: DateRange | undefined;
 }

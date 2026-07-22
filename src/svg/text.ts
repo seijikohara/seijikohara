@@ -51,6 +51,27 @@ export function formatInt(v: number): string {
   return sign + digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+] as const;
+
+/** "2026-07-22" -> "Jul 22" or "Jul 22, 2026". */
+export function formatDate(date: string, withYear: boolean): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  const month = m ? MONTHS[Number(m[2]) - 1] : undefined;
+  if (!m || month === undefined) throw new Error(`invalid calendar date: ${date}`);
+  const day = Number(m[3]);
+  return withYear ? `${month} ${day}, ${m[1]}` : `${month} ${day}`;
+}
+
+/** Inclusive range, collapsing a shared year: "May 31 – Jul 22, 2026". */
+export function formatDateRange(start: string, end: string): string {
+  if (start === end) return formatDate(end, true);
+  const sameYear = start.slice(0, 4) === end.slice(0, 4);
+  return `${formatDate(start, !sameYear)} – ${formatDate(end, true)}`;
+}
+
 /** "2026-07-22T03:17:45.123Z" -> "2026-07-22 03:17 UTC". */
 export function formatUtcTimestamp(iso: string): string {
   const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(iso);

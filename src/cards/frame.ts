@@ -84,6 +84,8 @@ export interface TileSpec {
   readonly value: string;
   /** Optional muted unit rendered after the value (e.g. "days"). */
   readonly unit?: string;
+  /** Optional mono caption under the value (e.g. a date range). */
+  readonly sub?: string | undefined;
 }
 
 /** A row of stat tiles on the inset background. Returns the SVG plus the row height. */
@@ -93,7 +95,8 @@ export function tileRow(
   y: number,
 ): { svg: string; height: number } {
   const gap = 12;
-  const height = 76;
+  const hasSub = tiles.some((tile) => tile.sub !== undefined);
+  const height = hasSub ? 94 : 76;
   const inner = CARD_WIDTH - CARD_PADDING * 2;
   const width = (inner - gap * (tiles.length - 1)) / tiles.length;
   const parts = tiles.map((tile, index) => {
@@ -111,6 +114,9 @@ export function tileRow(
           ? ""
           : el("tspan", { class: "t-unit", dx: 6 }, textNode(tile.unit)),
       ),
+      tile.sub === undefined
+        ? ""
+        : el("text", { x: x + 16, y: y + 80, class: "t-mono" }, textNode(tile.sub.toUpperCase())),
     );
   });
   return { svg: parts.join(""), height };

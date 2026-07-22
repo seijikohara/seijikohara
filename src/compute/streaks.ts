@@ -1,6 +1,6 @@
 /** Streak math over the merged daily contribution series. */
 
-import type { DayContribution, Streaks } from "../model.ts";
+import type { DateRange, DayContribution, Streaks } from "../model.ts";
 
 const DAY_MS = 86_400_000;
 
@@ -11,7 +11,7 @@ function toUtcMs(date: string): number {
 }
 
 /**
- * Compute current and longest streaks.
+ * Compute current and longest streaks with their date ranges.
  *
  * `days` must be ascending and date-unique (mergeDailySeries guarantees both).
  * The "today" anchor is the series' last day, so results do not depend on the
@@ -21,14 +21,24 @@ function toUtcMs(date: string): number {
  */
 export function computeStreaks(days: readonly DayContribution[]): Streaks {
   let longest = 0;
+  let longestRange: DateRange | undefined;
   let run = 0;
+  let runStart = "";
   let lastActiveMs = Number.NaN;
   for (const day of days) {
     if (day.count === 0) continue;
     const ms = toUtcMs(day.date);
-    run = ms - lastActiveMs === DAY_MS ? run + 1 : 1;
+    if (ms - lastActiveMs === DAY_MS) {
+      run += 1;
+    } else {
+      run = 1;
+      runStart = day.date;
+    }
     lastActiveMs = ms;
-    if (run > longest) longest = run;
+    if (run > longest) {
+      longest = run;
+      longestRange = { start: runStart, end: day.date };
+    }
   }
 
   // Current streak: walk back from the end; forgive the final day if zero.
@@ -36,6 +46,7 @@ export function computeStreaks(days: readonly DayContribution[]): Streaks {
   const last = days[index];
   if (last !== undefined && last.count === 0) index -= 1;
   let current = 0;
+  let currentRange: DateRange | undefined;
   let expectedMs = Number.NaN;
   for (; index >= 0; index -= 1) {
     const day = days[index];
@@ -43,8 +54,9 @@ export function computeStreaks(days: readonly DayContribution[]): Streaks {
     const ms = toUtcMs(day.date);
     if (!Number.isNaN(expectedMs) && ms !== expectedMs) break;
     current += 1;
+    currentRange = { start: day.date, end: currentRange?.end ?? day.date };
     expectedMs = ms - DAY_MS;
   }
 
-  return { current, longest };
+  return { current, longest, currentRange, longestRange };
 }

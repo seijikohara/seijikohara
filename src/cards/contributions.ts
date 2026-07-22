@@ -10,7 +10,7 @@
 import { CARD_PADDING, CARD_WIDTH } from "../config.ts";
 import type { DayContribution, ProfileData, Streaks } from "../model.ts";
 import { el, num, textNode } from "../svg/dsl.ts";
-import { formatInt, formatUtcTimestamp } from "../svg/text.ts";
+import { formatDateRange, formatInt, formatUtcTimestamp } from "../svg/text.ts";
 import { shade, type Theme } from "../theme.ts";
 import { cardFrame, tileRow, type TileSpec } from "./frame.ts";
 
@@ -94,10 +94,33 @@ export function renderContributions(
     right: shade(color, 0.38),
   }));
 
+  const firstTrailing = data.trailing.days[0];
+  const lastTrailing = data.trailing.days.at(-1);
   const tiles: TileSpec[] = [
-    { label: "Current streak", value: formatInt(streaks.current), unit: streaks.current === 1 ? "day" : "days" },
-    { label: "Longest streak", value: formatInt(streaks.longest), unit: streaks.longest === 1 ? "day" : "days" },
-    { label: "Contributions (past 12 months)", value: formatInt(data.trailing.total) },
+    {
+      label: "Current streak",
+      value: formatInt(streaks.current),
+      unit: streaks.current === 1 ? "day" : "days",
+      sub: streaks.currentRange
+        ? formatDateRange(streaks.currentRange.start, streaks.currentRange.end)
+        : "No active streak",
+    },
+    {
+      label: "Longest streak",
+      value: formatInt(streaks.longest),
+      unit: streaks.longest === 1 ? "day" : "days",
+      sub: streaks.longestRange
+        ? formatDateRange(streaks.longestRange.start, streaks.longestRange.end)
+        : "No contributions yet",
+    },
+    {
+      label: "Contributions (past 12 months)",
+      value: formatInt(data.trailing.total),
+      sub:
+        firstTrailing && lastTrailing
+          ? formatDateRange(firstTrailing.date, lastTrailing.date)
+          : undefined,
+    },
   ];
   const tileTop = 60;
   const { svg: tilesSvg, height: tileHeight } = tileRow(theme, tiles, tileTop);
