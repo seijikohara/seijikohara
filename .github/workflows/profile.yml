@@ -28,7 +28,9 @@ jobs:
       - name: Select Node.js 24 from the hosted toolcache
         run: |
           set -euo pipefail
-          node_bin="$(ls -d "${RUNNER_TOOL_CACHE:-/opt/hostedtoolcache}"/node/24.*/x64/bin 2>/dev/null | sort -V | tail -n 1)"
+          # `|| true` keeps set -e from aborting on a glob miss, so the
+          # nodejs.org fallback below stays reachable.
+          node_bin="$(ls -d "${RUNNER_TOOL_CACHE:-/opt/hostedtoolcache}"/node/24.*/x64/bin 2>/dev/null | sort -V | tail -n 1 || true)"
           if [ -z "${node_bin}" ]; then
             echo "Node 24 not in toolcache; falling back to checksum-verified nodejs.org download" >&2
             cd "${RUNNER_TEMP}"
@@ -74,7 +76,20 @@ jobs:
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -m "chore(profile): refresh generated cards [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          # The branch can advance while the generator runs (Renovate, manual
+          # pushes); rebase the asset commit and retry instead of failing.
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            echo "Push attempt ${attempt} rejected; rebasing onto the latest ${GITHUB_REF_NAME}" >&2
+            git fetch origin "${GITHUB_REF_NAME}"
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                rebase FETCH_HEAD
+          done
+          echo "Failed to push after 3 attempts" >&2
+          exit 1
 
   keepalive:
     # Public-repo schedules are disabled after 60 days without "repository

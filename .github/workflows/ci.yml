@@ -23,7 +23,9 @@ jobs:
       - name: Select Node.js 24 from the hosted toolcache
         run: |
           set -euo pipefail
-          node_bin="$(ls -d "${RUNNER_TOOL_CACHE:-/opt/hostedtoolcache}"/node/24.*/x64/bin 2>/dev/null | sort -V | tail -n 1)"
+          # `|| true` keeps set -e from aborting on a glob miss, so the
+          # nodejs.org fallback below stays reachable.
+          node_bin="$(ls -d "${RUNNER_TOOL_CACHE:-/opt/hostedtoolcache}"/node/24.*/x64/bin 2>/dev/null | sort -V | tail -n 1 || true)"
           if [ -z "${node_bin}" ]; then
             echo "Node 24 not in toolcache; falling back to checksum-verified nodejs.org download" >&2
             cd "${RUNNER_TEMP}"
@@ -38,9 +40,10 @@ jobs:
           "${node_bin}/node" --version
           echo "${node_bin}" >> "${GITHUB_PATH}"
 
-      - name: Clone repository at the triggering ref
-        # GITHUB_REF is refs/pull/N/merge on pull_request and refs/heads/main
-        # on push, so one fetch covers both.
+      - name: Clone repository at the triggering commit
+        # pull_request: fetch the merge ref. push: fetch GITHUB_SHA itself, so
+        # the check tests exactly the commit it reports on, not whatever the
+        # branch tip is at fetch time.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -49,7 +52,11 @@ jobs:
           cd repo
           git remote add origin \
             "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --quiet --depth 1 origin "${GITHUB_REF}"
+          target="${GITHUB_SHA}"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            target="${GITHUB_REF}"
+          fi
+          git fetch --quiet --depth 1 origin "${target}"
           git checkout --quiet FETCH_HEAD
 
       - name: Install pnpm (version pinned by packageManager in package.json)
@@ -80,4 +87,7 @@ jobs:
         run: |
           set -euo pipefail
           pnpm run badges
+          # --intent-to-add makes brand-new badge files visible to git diff;
+          # plain diff ignores untracked files and would pass a stale commit.
+          git add --intent-to-add assets/badges
           git diff --exit-code -- assets/badges

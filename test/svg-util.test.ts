@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { el, esc, num } from "../src/svg/dsl.ts";
 import {
-  formatCompact,
   formatDate,
   formatDateRange,
   formatInt,
   formatUtcTimestamp,
-  measureMono,
   measureSans,
 } from "../src/svg/text.ts";
 import { mergeDailySeries } from "../src/github/fetch-profile.ts";
@@ -50,11 +48,6 @@ describe("formatting", () => {
     expect(formatInt(11145)).toBe("11,145");
     expect(formatInt(-1234567)).toBe("-1,234,567");
   });
-  it("compacts large values only", () => {
-    expect(formatCompact(9999)).toBe("9,999");
-    expect(formatCompact(12345)).toBe("12.3k");
-    expect(formatCompact(120000)).toBe("120k");
-  });
   it("formats UTC timestamps to minute precision", () => {
     expect(formatUtcTimestamp("2026-07-22T03:17:45.123Z")).toBe("2026-07-22 03:17 UTC");
     expect(() => formatUtcTimestamp("not a date")).toThrow(/invalid ISO/);
@@ -74,9 +67,6 @@ describe("measurement", () => {
     const base = measureSans("Contributions", 12);
     expect(measureSans("Contributions", 24)).toBeCloseTo(base * 2, 5);
     expect(measureSans("Contributions", 12, "semibold")).toBeGreaterThan(base);
-  });
-  it("measures monospace by character count", () => {
-    expect(measureMono("abc", 10)).toBeCloseTo(3 * 6.02, 5);
   });
 });
 

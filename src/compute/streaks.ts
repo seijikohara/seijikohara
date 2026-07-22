@@ -41,13 +41,18 @@ export function computeStreaks(days: readonly DayContribution[]): Streaks {
     }
   }
 
-  // Current streak: walk back from the end; forgive the final day if zero.
+  // Current streak: walk back from the end; forgive the final day if zero —
+  // but anchor continuity to it, so a gap before the forgiven day still ends
+  // the streak.
   let index = days.length - 1;
   const last = days[index];
-  if (last !== undefined && last.count === 0) index -= 1;
   let current = 0;
   let currentRange: DateRange | undefined;
   let expectedMs = Number.NaN;
+  if (last !== undefined && last.count === 0) {
+    index -= 1;
+    expectedMs = toUtcMs(last.date) - DAY_MS;
+  }
   for (; index >= 0; index -= 1) {
     const day = days[index];
     if (day === undefined || day.count === 0) break;

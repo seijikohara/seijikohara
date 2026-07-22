@@ -1,16 +1,18 @@
 /**
  * Contributions card: streak tiles plus the trailing-12-month contribution
- * calendar as an isometric 3D graph (2:1 projection, pure static polygons).
+ * calendar as an isometric 3D graph (flat axonometric projection, pure static
+ * polygons).
  *
- * Color carries the API's true quartile encoding; column height (linear in
- * count, scaled to the window maximum) reinforces it redundantly, so the 3D
- * treatment never misstates the data.
+ * Color carries the API's exact quartile encoding; column height reinforces it
+ * on a square-root scale, chosen so one spike day cannot flatten every typical
+ * day to invisibility. Height is redundant decoration over the honest color
+ * channel, never the primary encoding.
  */
 
 import { CARD_PADDING, CARD_WIDTH } from "../config.ts";
 import type { DayContribution, ProfileData, Streaks } from "../model.ts";
 import { el, num, textNode } from "../svg/dsl.ts";
-import { formatDateRange, formatInt, formatUtcTimestamp } from "../svg/text.ts";
+import { formatDate, formatDateRange, formatInt, formatUtcTimestamp } from "../svg/text.ts";
 import { shade, type Theme } from "../theme.ts";
 import { cardFrame, tileRow, type TileSpec } from "./frame.ts";
 
@@ -135,6 +137,26 @@ export function renderContributions(
   const originY = graphTop + MAX_COLUMN;
   const groundBottom = originY + (weekCount - 1 + 6) * HH + HH * 2;
 
+  // Month ticks along the front-left edge: label each week that contains the
+  // first day of a month, at that week's front (Saturday) corner.
+  const monthTicks = weeks.flatMap((week, w) => {
+    const firstOfMonth = week.find((day) => day.date.endsWith("-01"));
+    if (!firstOfMonth) return [];
+    const label = formatDate(firstOfMonth.date, false).split(" ")[0] ?? "";
+    return [
+      el(
+        "text",
+        {
+          x: originX + (w - 6) * HW - HW - 6,
+          y: originY + (w + 6) * HH + HH * 2 + 4,
+          class: "t-tick",
+          "text-anchor": "end",
+        },
+        textNode(label),
+      ),
+    ];
+  });
+
   const weekGroups = weeks.map((week, w) => {
     const columns = week.map((day, d) => {
       const face = faces[day.level] ?? faces[0];
@@ -200,6 +222,7 @@ export function renderContributions(
     },
     el("g", { class: "fade" }, tilesSvg),
     ...weekGroups,
+    el("g", { class: "fade" }, ...monthTicks),
     legend,
     caption,
   );

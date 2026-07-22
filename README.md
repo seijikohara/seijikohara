@@ -14,7 +14,7 @@ Software Engineer.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/overview.dark.svg">
-  <img alt="Overview: lifetime and current-year contributions, stars, followers, merged pull requests, issues, repositories, and contributions by year" src="./assets/overview.light.svg" width="100%">
+  <img alt="Overview: lifetime and current-year contributions, stars, followers, merged pull requests, issues, public repositories, recently contributed-to repositories, and contributions by year" src="./assets/overview.light.svg" width="100%">
 </picture>
 
 <picture>

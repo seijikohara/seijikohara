@@ -2,8 +2,13 @@
 
 /**
  * Everything except calendars, in one cheap query (1 point, ~1.1k nodes).
- * `privacy: PUBLIC` keeps output identical whatever token runs the generator
- * (a PAT would otherwise leak private-repo aggregates into committed SVGs).
+ *
+ * `privacy: PUBLIC` pins the repository-derived numbers (stars, languages,
+ * repo count) to public data whatever token runs the generator. The flat
+ * counters (pullRequests, issues, repositoriesContributedTo) are still
+ * viewer-dependent — a PAT sees private items GITHUB_TOKEN cannot — so the
+ * scheduled workflow is the canonical producer of committed assets; local
+ * PAT runs are for inspection only.
  */
 export const PROFILE_QUERY = `
 query Profile($login: String!, $cursor: String) {

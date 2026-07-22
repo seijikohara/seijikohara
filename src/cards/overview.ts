@@ -39,15 +39,19 @@ export function renderOverview(data: ProfileData, theme: Theme): string {
     { label: "Pull requests merged", value: formatInt(data.mergedPullRequests) },
     { label: "Issues opened", value: formatInt(data.issues) },
     { label: "Public repositories", value: formatInt(data.publicSourceRepos) },
-    { label: "Contributed to", value: formatInt(data.contributedTo) },
+    // The API's repositoriesContributedTo is a rolling recent window, not a
+    // career total — the label must say so.
+    { label: "Contributed to (recent)", value: formatInt(data.contributedTo) },
   ];
 
   const tilesA = tileRow(theme, rowA, 60);
   const tilesB = tileRow(theme, rowB, 60 + tilesA.height + 12);
 
-  // Activity-by-year strip.
+  // Activity-by-year strip. The 16px pad below the eyebrow keeps a full-height
+  // column's value label clear of the eyebrow text when the peak year sits at
+  // the left edge.
   const stripTop = 60 + tilesA.height * 2 + 12 + 36;
-  const baseline = stripTop + COLUMN_MAX_HEIGHT;
+  const baseline = stripTop + 16 + COLUMN_MAX_HEIGHT;
   const inner = CARD_WIDTH - CARD_PADDING * 2;
   const band = inner / data.years.length;
   const max = Math.max(1, ...data.years.map((year) => year.total));

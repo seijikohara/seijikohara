@@ -72,7 +72,7 @@ is bounded by the least-maintained dependency.
        gh workflow enable profile.yml   ← documented reset of the 60-day timer
 
 .github/workflows/ci.yml        (pull_request; ZERO uses:)
-  └─ typecheck (tsc 7) + lint (oxlint) + test (vitest) with npm ci --ignore-scripts
+  └─ typecheck (tsc 7) + lint (oxlint) + test (vitest) with pnpm install --ignore-scripts
 ```
 
 Generation is all-or-nothing: every card renders in memory first; files are
@@ -108,7 +108,7 @@ New/extended content: lifetime contribution total, per-year career columns
 ```
 # Seiji Kohara
 Software Engineer.
-[GitHub] [LinkedIn] [Facebook] [Findy] [LAPRAS] [Wantedly] [Qiita] [Zenn]   ← badge SVGs, linked
+[LinkedIn] [Facebook] [Findy] [LAPRAS] [Wantedly] [Qiita] [Zenn]   ← badge SVGs, linked
 
 ┌ Overview ────────────────────────────────────┐  846×~340
 │ 8 stat tiles (2×4): lifetime contributions,  │
@@ -120,11 +120,11 @@ Software Engineer.
 ┌ Contributions ───────────────────────────────┐  846×~560  ← signature card
 │ tiles: current streak · longest · this year  │
 │ trailing-12-month ISOMETRIC 3D graph:        │
-│   53×7 grid in 2:1 isometric projection,     │
-│   each day an extruded column, height ∝      │
-│   contribution count (linear, capped), top   │
-│   face = Primer green quartile ramp, side    │
-│   faces shaded; staggered rise-in animation  │
+│   53×7 grid, flat 3:1 axonometric,           │
+│   each day an extruded column, height =      │
+│   sqrt(count/max) (color carries exact       │
+│   quartiles), month ticks on the front edge, │
+│   side faces shaded; staggered rise-in       │
 │ footer: "Refreshed 2026-07-22 03:17 UTC"     │
 └──────────────────────────────────────────────┘
 ┌ Languages ───────────────────────────────────┐  846×~200
@@ -177,11 +177,13 @@ hairline solid gridlines one step off surface; values labeled selectively
 (endpoint + extreme), never on every mark.
 
 **Isometric 3D graph** (the signature; replaces both Pac-Man and a flat
-heatmap). 2:1 isometric projection: tile width 24px → grid footprint
+heatmap). Flat 3:1 axonometric projection: tile width 24px → grid footprint
 (53+7)·12 = 720px wide, fitting the 798px inner width. Day (week `w`, weekday
-`d`) projects to `x = x0 + (w−d)·12`, `y = y0 + (w+d)·6`. A zero day renders as
-a flat diamond in the level-0 color; an active day extrudes to height
-`4 + (count/max)·56` px (linear, capped — relative heights stay honest). Each
+`d`) projects to `x = x0 + (w−d)·12`, `y = y0 + (w+d)·4`. A zero day renders as
+a flat diamond in the level-0 color; an active day extrudes on a square-root
+scale of `count/max` (a linear scale lets one spike day flatten every typical
+day to invisibility; the exact magnitude encoding stays with the quartile
+color, height is redundant reinforcement). Each
 column is three `<polygon>`s: top face in the API's quartile color
 (`contributionLevel` → Primer green ramp), left/right faces darkened steps of
 the same hue (per-theme, precomputed — no CSS filters). Painter's order: back
@@ -247,7 +249,7 @@ src/
   cards/frame.ts        # shared chrome: bg, border, title, footer
   cards/overview.ts  cards/contributions.ts  cards/languages.ts  cards/badge.ts
 scripts/generate-badges.ts   # dev-time; imports simple-icons; writes assets/badges/
-preview/index.html  preview/main.ts   # Vite playground: fixtures → live cards, both themes
+preview-app/index.html  preview-app/main.ts   # Vite playground: fixtures → live cards, both themes
 fixtures/profile.json        # captured real API shapes for tests + preview
 test/*.test.ts               # vitest
 assets/                      # generated: overview/contributions/languages .light/.dark.svg
@@ -283,7 +285,7 @@ reset for the 60-day scheduled-workflow disable (bot-commit "activity" is
 unverified folklore).
 
 `ci.yml` — `pull_request`; `permissions: contents: read`; node PATH-prepend →
-clone → `npm ci --ignore-scripts` → `tsc --noEmit`, `oxlint`, `vitest run`.
+clone → `pnpm install --frozen-lockfile --ignore-scripts` → `tsc --noEmit`, `oxlint`, `vitest run`.
 Same zero-`uses:` discipline (manual clone; no cache action — the dep tree is
 tiny).
 
@@ -319,3 +321,38 @@ watches for accidental reintroduction of `uses:`).
 - Deleting the stale `fix-pacman-oom` worktree/branches (separate housekeeping).
 - WakaTime, profile views, trophies (already removed; still out).
 - Auto-merge of this change (user merges the PR).
+
+## Implementation Outcome (2026-07-22)
+
+Deviations and refinements discovered while shipping (the sections above are
+kept as approved; this section is authoritative where they differ):
+
+- **pnpm, not npm** (user directive mid-implementation): `packageManager:
+  pnpm@11`, `pnpm-lock.yaml`, CI installs the pinned pnpm via `npm install -g`
+  reading the version from `packageManager`. The scheduled workflow still uses
+  no package manager at all.
+- **Streak date ranges** (user directive): each streak tile shows its
+  inclusive date range; the past-12-months tile shows its window. Current and
+  Longest can be the same streak, which the identical ranges now make evident.
+- **Projection flattened to 3:1** (from 2:1) and **column height moved from
+  linear to sqrt** after rendering real data: one 100+ contribution day made
+  every typical day nearly flat. Color keeps the exact quartile encoding.
+- **Month ticks implemented** along the front edge as specified.
+- **No GitHub badge**: on github.com/seijikohara a GitHub link badge is
+  redundant; the row starts at LinkedIn.
+- **"Contributed to" tile relabeled "(recent)"**: the API field is a rolling
+  recent window, not a career total.
+- **`preview/` shipped as `preview-app/`** (avoids the `vite preview`
+  subcommand ambiguity in `package.json` scripts).
+- **Renovate**: replaced `:preserveSemverRanges` (whose replace strategy never
+  delivers in-range updates) with an npm-manager `rangeStrategy:
+  update-lockfile` rule; `lockFileUpdate` added to the automerge types.
+- **Workflow hardening from review**: toolcache-miss fallback made reachable
+  under `set -e`; refresh push retries with rebase if the branch advanced
+  mid-run; CI checks out the exact triggering commit on push events; the badge
+  freshness check uses `git add --intent-to-add` so brand-new badge files fail
+  the diff.
+- **Token-independence scope corrected**: only repository-derived numbers are
+  pinned by `privacy: PUBLIC`; flat counters remain viewer-dependent, so the
+  scheduled workflow (GITHUB_TOKEN) is the canonical producer of committed
+  assets.

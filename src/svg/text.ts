@@ -39,11 +39,6 @@ export function measureSans(
   return em * size * (weight === "semibold" ? BOLD_FACTOR : 1);
 }
 
-/** Monospace width: fixed 0.602em per character (SF Mono / Menlo ratio). */
-export function measureMono(text: string, size: number): number {
-  return [...text].length * 0.602 * size;
-}
-
 /** 12345 -> "12,345". Hand-rolled so output never depends on ICU data. */
 export function formatInt(v: number): string {
   const sign = v < 0 ? "-" : "";
@@ -77,12 +72,4 @@ export function formatUtcTimestamp(iso: string): string {
   const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(iso);
   if (!m) throw new Error(`invalid ISO timestamp: ${iso}`);
   return `${m[1]} ${m[2]} UTC`;
-}
-
-/** Compact form for constrained slots: 12345 -> "12.3k" (only used when a full value cannot fit). */
-export function formatCompact(v: number): string {
-  if (Math.abs(v) < 10_000) return formatInt(v);
-  const k = v / 1000;
-  const rounded = Math.round(k * 10) / 10;
-  return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)}k`;
 }

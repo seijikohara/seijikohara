@@ -93,6 +93,12 @@ describe("computeStreaks", () => {
     expect(result.longestRange).toBeUndefined();
   });
 
+  it("does not bridge a gap through the forgiven trailing zero day", () => {
+    const days = [day("2026-07-10", 5), day("2026-07-22", 0)];
+    expect(computeStreaks(days)).toMatchObject({ current: 0, longest: 1 });
+    expect(computeStreaks(days).currentRange).toBeUndefined();
+  });
+
   it("forgives the trailing zero day in the current range", () => {
     const days = [day("2026-07-20", 4), day("2026-07-21", 2), day("2026-07-22", 0)];
     expect(computeStreaks(days).currentRange).toEqual({
