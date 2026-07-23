@@ -53,10 +53,13 @@ export const DARK: Theme = {
 
 export const THEMES: readonly Theme[] = [LIGHT, DARK];
 
+// System stacks (no embedded webfont) — used as-is by the lightweight badges.
+// The cards prepend 'Roboto' / 'Roboto Mono' in cardFrame, where the matching
+// @font-face is embedded.
 export const FONT_SANS =
-  "'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
+  "-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
 export const FONT_MONO =
-  "'Roboto Mono',ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace";
+  "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace";
 
 /** Parse #rrggbb into channels. Throws on malformed input (all inputs are first-party constants or linguist colors). */
 export function hexToRgb(hex: string): [number, number, number] {

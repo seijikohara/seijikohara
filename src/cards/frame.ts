@@ -31,13 +31,13 @@ export function cardFrame(options: FrameOptions, ...children: string[]): string 
   const { theme, height, title, note, description, extraCss, fonts } = options;
   const css = `
 ${fontFaceCss(fonts ?? DEFAULT_FONTS)}
-text{font-family:${FONT_SANS};font-weight:200}
+text{font-family:'Roboto',${FONT_SANS};font-weight:200}
 .t-title{font-size:15px;font-weight:600;fill:${theme.fg}}
 .t-value{font-size:28px;font-weight:600;fill:${theme.fg}}
 .t-unit{font-size:14px;font-weight:200;fill:${theme.fgMuted}}
 .t-label{font-size:12px;font-weight:200;fill:${theme.fgMuted}}
-.t-mono{font-family:${FONT_MONO};font-weight:400;font-size:10px;fill:${theme.fgMuted};letter-spacing:.4px}
-.t-tick{font-family:${FONT_MONO};font-weight:400;font-size:9.5px;fill:${theme.fgMuted}}
+.t-mono{font-family:'Roboto Mono',${FONT_MONO};font-weight:400;font-size:10px;fill:${theme.fgMuted};letter-spacing:.4px}
+.t-tick{font-family:'Roboto Mono',${FONT_MONO};font-weight:400;font-size:9.5px;fill:${theme.fgMuted}}
 .fade{opacity:0;animation:fade .5s ease .1s forwards}
 @keyframes fade{to{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
