@@ -14,7 +14,12 @@ Software Engineer.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/overview.dark.svg">
-  <img alt="Overview: lifetime and current-year contributions, stars, followers, merged pull requests, issues, public repositories, recently contributed-to repositories, and contributions by year" src="./assets/overview.light.svg" width="100%">
+  <img alt="Overview: lifetime and current-year contributions, stars, followers, merged pull requests, issues, public repositories, and recently contributed-to repositories" src="./assets/overview.light.svg" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/lifetime.dark.svg">
+  <img alt="Lifetime contributions heatmap: one row per year from 2014 to the present, each week shaded by activity level" src="./assets/lifetime.light.svg" width="100%">
 </picture>
 
 <picture>
@@ -23,8 +28,18 @@ Software Engineer.
 </picture>
 
 <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/composition.dark.svg">
+  <img alt="Contribution composition by year: commits, pull requests, issues, reviews, and private contributions, with the overall private share" src="./assets/composition.light.svg" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/rhythm.dark.svg">
+  <img alt="Activity rhythm: contributions by weekday and by month of the year" src="./assets/rhythm.light.svg" width="100%">
+</picture>
+
+<picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/languages.dark.svg">
-  <img alt="Languages: share of public source code by bytes" src="./assets/languages.light.svg" width="100%">
+  <img alt="Languages: share of public source code by bytes, drawn as a treemap" src="./assets/languages.light.svg" width="100%">
 </picture>
 
 ### Packages
@@ -34,4 +49,4 @@ Software Engineer.
   <a href="https://www.npmjs.com/~seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/npm.dark.svg"><img alt="npm" src="./assets/badges/npm.light.svg"></picture></a>
 </p>
 
-<sub>Cards are static SVGs regenerated every 6 hours by <a href=".github/workflows/profile.yml">a dependency-free workflow</a> in this repository.</sub>
+<sub>Cards are static SVGs regenerated every 6 hours by <a href=".github/workflows/profile.yml">a dependency-free workflow</a> in this repository. Type is set in <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>, embedded under the <a href="https://openfontlicense.org/">SIL Open Font License 1.1</a>.</sub>

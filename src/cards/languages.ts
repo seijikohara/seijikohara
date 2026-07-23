@@ -1,63 +1,89 @@
-/** Languages card: one stacked proportion bar plus a direct-labeled legend. */
+/** Languages card: a squarified treemap by bytes with a full-coverage legend. */
 
 import { CARD_PADDING, CARD_WIDTH } from "../config.ts";
 import { languageShares, type LanguageShare } from "../compute/languages.ts";
+import { squarify } from "../compute/treemap.ts";
 import type { ProfileData } from "../model.ts";
 import { el, textNode } from "../svg/dsl.ts";
-import type { Theme } from "../theme.ts";
+import { contrast, type Theme } from "../theme.ts";
 import { cardFrame } from "./frame.ts";
 
-const BAR_HEIGHT = 20;
-const BAR_GAP = 2;
+const TREE_TOP = 60;
+const TREE_HEIGHT = 150;
+const LEGEND_TOP_GAP = 30;
 const LEGEND_COLUMNS = 3;
 const LEGEND_ROW_HEIGHT = 30;
 
-/** Fallback for languages without a linguist color, and for "Other". */
-function sliceColor(share: LanguageShare, theme: Theme): string {
+/** Smallest cell that fits a two-line in-cell label; below this, only the legend names the language. */
+const LABEL_MIN_WIDTH = 54;
+const LABEL_MIN_HEIGHT = 30;
+
+/** Fill for a share: its linguist color, or the muted token for "Other" and colorless languages. */
+function cellFill(share: LanguageShare, theme: Theme): string {
   return share.color ?? theme.fgMuted;
 }
 
 export function renderLanguages(data: ProfileData, theme: Theme): string {
   const shares = languageShares(data.languages);
-  const inner = CARD_WIDTH - CARD_PADDING * 2;
-  const barY = 64;
 
-  // Stacked proportion bar. Segments are separated by 2px of card surface;
-  // outer corners are rounded by the clip, not per-segment strokes.
-  const clipId = "bar-clip";
-  const gapsTotal = BAR_GAP * Math.max(0, shares.length - 1);
-  const usable = inner - gapsTotal;
-  let cursor = CARD_PADDING;
-  const segments = shares.map((share) => {
-    const width = (share.pct / 100) * usable;
-    const rect = el("rect", {
-      x: cursor,
-      y: barY,
-      width: Math.max(width, 1),
-      height: BAR_HEIGHT,
-      fill: sliceColor(share, theme),
+  if (shares.length === 0) {
+    return cardFrame(
+      {
+        theme,
+        height: 96,
+        title: "Languages",
+        description: `No language data for ${data.login}.`,
+      },
+      el("text", { x: CARD_PADDING, y: 72, class: "t-label" }, textNode("No language data")),
+    );
+  }
+
+  const inner = CARD_WIDTH - CARD_PADDING * 2;
+  const rects = squarify(
+    shares.map((share) => share.bytes),
+    CARD_PADDING,
+    TREE_TOP,
+    inner,
+    TREE_HEIGHT,
+  );
+
+  // One faded, staggered group per cell: an inset rounded rect (the 1px inset on
+  // every side leaves ~2px of card background between neighbors) plus an optional
+  // in-cell label when the cell is large enough to hold it.
+  const cells = rects.map((rect) => {
+    const share = shares[rect.index]!;
+    const fill = cellFill(share, theme);
+    const rectEl = el("rect", {
+      x: rect.x + 1,
+      y: rect.y + 1,
+      width: Math.max(0, rect.width - 2),
+      height: Math.max(0, rect.height - 2),
+      rx: 2,
+      fill,
     });
-    cursor += width + BAR_GAP;
-    return rect;
+
+    let label = "";
+    if (rect.width >= LABEL_MIN_WIDTH && rect.height >= LABEL_MIN_HEIGHT) {
+      // On-cell ink: white or near-black, whichever contrasts more with the fill.
+      const ink = contrast(fill, "#ffffff") >= contrast(fill, "#1f2328") ? "#ffffff" : "#1f2328";
+      const tx = rect.x + 9;
+      label =
+        el("text", { x: tx, y: rect.y + 20, class: "lang", fill: ink }, textNode(share.name)) +
+        el(
+          "text",
+          { x: tx, y: rect.y + 34, class: "lang-pct", fill: ink },
+          textNode(`${share.pct.toFixed(1)}%`),
+        );
+    }
+
+    return el("g", { class: `fade c${rect.index}` }, rectEl, label);
   });
 
-  const bar =
-    el(
-      "clipPath",
-      { id: clipId },
-      el("rect", {
-        x: CARD_PADDING,
-        y: barY,
-        width: inner,
-        height: BAR_HEIGHT,
-        rx: BAR_HEIGHT / 2,
-      }),
-    ) + el("g", { "clip-path": `url(#${clipId})` }, ...segments);
-
-  // Legend grid: swatch dot + name + muted percentage.
-  const legendTop = barY + BAR_HEIGHT + 28;
+  // Legend lists every share, so each name and percentage appears regardless of
+  // how small its treemap cell is.
+  const legendTop = TREE_TOP + TREE_HEIGHT + LEGEND_TOP_GAP;
   const columnWidth = inner / LEGEND_COLUMNS;
-  const entries = shares.map((share, index) => {
+  const legend = shares.map((share, index) => {
     const column = index % LEGEND_COLUMNS;
     const row = Math.floor(index / LEGEND_COLUMNS);
     const x = CARD_PADDING + column * columnWidth;
@@ -65,29 +91,45 @@ export function renderLanguages(data: ProfileData, theme: Theme): string {
     return el(
       "g",
       {},
-      el("circle", { cx: x + 5, cy: y - 4, r: 5, fill: sliceColor(share, theme) }),
-      el("text", { x: x + 18, y, class: "t-name" }, textNode(share.name)),
+      el("circle", { cx: x + 5, cy: y - 4, r: 5, fill: cellFill(share, theme) }),
+      el("text", { x: x + 18, y, class: "leg-name" }, textNode(share.name)),
       el(
         "text",
-        { x: x + columnWidth - 20, y, class: "t-tick", "text-anchor": "end" },
+        { x: x + columnWidth - 16, y, class: "t-tick", "text-anchor": "end" },
         textNode(`${share.pct.toFixed(1)}%`),
       ),
     );
   });
 
-  const rows = Math.ceil(shares.length / LEGEND_COLUMNS);
-  const height = legendTop + (rows - 1) * LEGEND_ROW_HEIGHT + CARD_PADDING + 8;
+  const legendRows = Math.ceil(shares.length / LEGEND_COLUMNS);
+  const height = legendTop + (legendRows - 1) * LEGEND_ROW_HEIGHT + CARD_PADDING + 8;
 
-  const topShare = shares[0];
+  // Per-cell fade delay, keyed by the share's rank and capped so the last cell is
+  // not left far behind the first. Delay is overridden per class rather than
+  // inline so all motion stays in the one <style> block (and honors the frame's
+  // reduced-motion reset).
+  const stagger = rects
+    .map(
+      (rect) => `.c${rect.index}{animation-delay:${Math.min(rect.index * 0.05, 0.6).toFixed(2)}s}`,
+    )
+    .join("");
+  const extraCss =
+    `.lang{font-size:13px;font-weight:600}` +
+    `.lang-pct{font-size:10.5px}` +
+    `.leg-name{font-size:13px;fill:${theme.fg}}` +
+    stagger;
+
+  const top = shares[0]!;
   return cardFrame(
     {
       theme,
       height,
       title: "Languages",
       note: "public source repositories · by bytes",
-      description: `Language breakdown for ${data.login}${topShare ? `, led by ${topShare.name} at ${topShare.pct.toFixed(1)}%` : ""}.`,
-      extraCss: `.t-name{font-size:13px;fill:${theme.fg}}`,
+      description: `Language breakdown for ${data.login} by bytes, led by ${top.name} at ${top.pct.toFixed(1)}%.`,
+      extraCss,
     },
-    el("g", { class: "fade" }, bar, ...entries),
+    ...cells,
+    el("g", { class: "fade" }, ...legend),
   );
 }

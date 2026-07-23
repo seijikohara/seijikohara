@@ -8,6 +8,7 @@
 
 import { CARD_PADDING, CARD_RADIUS, CARD_WIDTH } from "../config.ts";
 import { FONT_MONO, FONT_SANS, type Theme } from "../theme.ts";
+import { DEFAULT_FONTS, fontFaceCss, type FontKey } from "../fonts.ts";
 import { el, textNode } from "../svg/dsl.ts";
 
 export interface FrameOptions {
@@ -20,23 +21,28 @@ export interface FrameOptions {
   readonly description: string;
   /** Extra <style> rules appended to the shared block. */
   readonly extraCss?: string;
+  /** Embedded font faces; defaults to ExtraLight base, SemiBold, and mono. */
+  readonly fonts?: readonly FontKey[];
 }
 
 const TITLE_BASELINE = 43;
 
 export function cardFrame(options: FrameOptions, ...children: string[]): string {
-  const { theme, height, title, note, description, extraCss } = options;
+  const { theme, height, title, note, description, extraCss, fonts } = options;
   const css = `
-text{font-family:${FONT_SANS}}
+${fontFaceCss(fonts ?? DEFAULT_FONTS)}
+text{font-family:'Roboto',${FONT_SANS};font-weight:200}
 .t-title{font-size:15px;font-weight:600;fill:${theme.fg}}
 .t-value{font-size:28px;font-weight:600;fill:${theme.fg}}
-.t-unit{font-size:14px;font-weight:400;fill:${theme.fgMuted}}
-.t-label{font-size:12px;fill:${theme.fgMuted}}
-.t-mono{font-family:${FONT_MONO};font-size:10px;fill:${theme.fgMuted};letter-spacing:.4px}
-.t-tick{font-family:${FONT_MONO};font-size:9.5px;fill:${theme.fgMuted}}
+.t-unit{font-size:14px;font-weight:200;fill:${theme.fgMuted}}
+.t-label{font-size:12px;font-weight:200;fill:${theme.fgMuted}}
+.t-mono{font-family:'Roboto Mono',${FONT_MONO};font-weight:400;font-size:10px;fill:${theme.fgMuted};letter-spacing:.4px}
+.t-tick{font-family:'Roboto Mono',${FONT_MONO};font-weight:400;font-size:9.5px;fill:${theme.fgMuted}}
 .fade{opacity:0;animation:fade .5s ease .1s forwards}
 @keyframes fade{to{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
+@keyframes growX{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;opacity:1!important;transform:none!important}}
 ${extraCss ?? ""}`;
 

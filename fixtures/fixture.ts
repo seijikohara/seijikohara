@@ -45,6 +45,35 @@ function trailingDays(): DayContribution[] {
   return days.map((day) => ({ ...day, count: day.count, level: levelFor(day.count, max) }));
 }
 
+/**
+ * Deterministic daily series spanning 2014-01-01 through 2026-07-22, for the
+ * lifetime heatmap and rhythm cards. Quiet weekends, occasional spikes, and a
+ * gentle year-over-year drift so the wall of years is not uniform.
+ */
+function lifetimeDays(): DayContribution[] {
+  const rand = mulberry32(20140101);
+  const start = Date.parse("2014-01-01T00:00:00Z");
+  const end = Date.parse("2026-07-22T00:00:00Z");
+  const days: { date: string; count: number }[] = [];
+  for (let ms = start; ms <= end; ms += DAY_MS) {
+    const weekday = new Date(ms).getUTCDay(); // 0 = Sunday .. 6 = Saturday
+    const weekend = weekday === 0 || weekday === 6;
+    const roll = rand();
+    const count = weekend
+      ? roll < 0.7
+        ? 0
+        : Math.ceil(rand() * 4)
+      : roll < 0.25
+        ? 0
+        : roll > 0.97
+          ? Math.ceil(rand() * 30)
+          : Math.ceil(rand() * 9);
+    days.push({ date: dateStr(ms), count });
+  }
+  const max = Math.max(1, ...days.map((day) => day.count));
+  return days.map((day) => ({ ...day, level: levelFor(day.count, max) }));
+}
+
 export function makeFixture(): ProfileData {
   const trailing = trailingDays();
   return {
@@ -84,7 +113,7 @@ export function makeFixture(): ProfileData {
       { year: 2025, total: 964, commits: 587, pullRequests: 259, issues: 72, reviews: 3, restricted: 34 },
       { year: 2026, total: 3333, commits: 1531, pullRequests: 1213, issues: 269, reviews: 3, restricted: 309 },
     ],
-    lifetimeDays: trailing,
+    lifetimeDays: lifetimeDays(),
     trailing: {
       days: trailing,
       total: trailing.reduce((sum, day) => sum + day.count, 0),

@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { makeFixture } from "../fixtures/fixture.ts";
 import { renderBadge } from "../src/cards/badge.ts";
+import { renderComposition } from "../src/cards/composition.ts";
 import { renderContributions, toWeeks } from "../src/cards/contributions.ts";
 import { renderLanguages } from "../src/cards/languages.ts";
+import { renderLifetime } from "../src/cards/lifetime.ts";
 import { renderOverview } from "../src/cards/overview.ts";
+import { renderRhythm } from "../src/cards/rhythm.ts";
 import { computeStreaks } from "../src/compute/streaks.ts";
 import { CARD_WIDTH } from "../src/config.ts";
 import { DARK, LIGHT, THEMES } from "../src/theme.ts";
@@ -15,7 +18,10 @@ const streaks = computeStreaks(data.lifetimeDays);
 function renderAll(): { name: string; svg: string }[] {
   return THEMES.flatMap((theme) => [
     { name: `overview.${theme.id}`, svg: renderOverview(data, theme) },
+    { name: `lifetime.${theme.id}`, svg: renderLifetime(data, theme) },
     { name: `contributions.${theme.id}`, svg: renderContributions(data, streaks, theme) },
+    { name: `composition.${theme.id}`, svg: renderComposition(data, theme) },
+    { name: `rhythm.${theme.id}`, svg: renderRhythm(data, theme) },
     { name: `languages.${theme.id}`, svg: renderLanguages(data, theme) },
     { name: `badge.${theme.id}`, svg: renderBadge("Maven Central", undefined, theme) },
   ]);
@@ -39,7 +45,12 @@ describe("card rendering", () => {
 
   it("contains no scripts, external references, or foreignObject", () => {
     for (const { name, svg } of renderAll()) {
-      const body = svg.replace('xmlns="http://www.w3.org/2000/svg"', "");
+      // Vet the embedded-font data URIs out of the scan: they are committed,
+      // reviewed binary blobs, not authored markup, and their Base64 payload
+      // could coincidentally contain a banned substring.
+      const body = svg
+        .replace('xmlns="http://www.w3.org/2000/svg"', "")
+        .replaceAll(/url\(data:[^)]*\)/g, "url(data:)");
       for (const banned of ["<script", "http://", "https://", "url(http", "<foreignObject", "href="]) {
         expect(body.includes(banned), `${name} must not contain ${banned}`).toBe(false);
       }

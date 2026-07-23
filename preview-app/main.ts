@@ -5,9 +5,12 @@
 
 import { makeFixture } from "../fixtures/fixture.ts";
 import { renderBadge } from "../src/cards/badge.ts";
+import { renderComposition } from "../src/cards/composition.ts";
 import { renderContributions } from "../src/cards/contributions.ts";
 import { renderLanguages } from "../src/cards/languages.ts";
+import { renderLifetime } from "../src/cards/lifetime.ts";
 import { renderOverview } from "../src/cards/overview.ts";
+import { renderRhythm } from "../src/cards/rhythm.ts";
 import { computeStreaks } from "../src/compute/streaks.ts";
 import { PACKAGE_BADGES, SOCIAL_BADGES } from "../src/config.ts";
 import { THEMES } from "../src/theme.ts";
@@ -38,7 +41,10 @@ if (app) {
         <div class="col">
           <div class="badges">${badges}</div>
           ${asImg(renderOverview(data, theme))}
+          ${asImg(renderLifetime(data, theme))}
           ${asImg(renderContributions(data, streaks, theme))}
+          ${asImg(renderComposition(data, theme))}
+          ${asImg(renderRhythm(data, theme))}
           ${asImg(renderLanguages(data, theme))}
         </div>
       </section>`;
