@@ -8,9 +8,12 @@
 
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { renderComposition } from "./cards/composition.ts";
 import { renderContributions } from "./cards/contributions.ts";
 import { renderLanguages } from "./cards/languages.ts";
+import { renderLifetime } from "./cards/lifetime.ts";
 import { renderOverview } from "./cards/overview.ts";
+import { renderRhythm } from "./cards/rhythm.ts";
 import { computeStreaks } from "./compute/streaks.ts";
 import { LOGIN } from "./config.ts";
 import { fetchProfile } from "./github/fetch-profile.ts";
@@ -32,7 +35,10 @@ const streaks = computeStreaks(data.lifetimeDays);
 const files = new Map<string, string>();
 for (const theme of THEMES) {
   files.set(`overview.${theme.id}.svg`, renderOverview(data, theme));
+  files.set(`lifetime.${theme.id}.svg`, renderLifetime(data, theme));
   files.set(`contributions.${theme.id}.svg`, renderContributions(data, streaks, theme));
+  files.set(`composition.${theme.id}.svg`, renderComposition(data, theme));
+  files.set(`rhythm.${theme.id}.svg`, renderRhythm(data, theme));
   files.set(`languages.${theme.id}.svg`, renderLanguages(data, theme));
 }
 

@@ -333,3 +333,37 @@ design: aggressive subsetting, per-card face selection, static-weight instances.
 - Consolidating the four static faces into one subsetted variable woff2 (smaller,
   but the variable-weight-in-img-SVG path is unverified; revisit with a spike).
 - Auto-merge (the user merges the PR).
+
+## Implementation Outcome (2026-07-23)
+
+Shipped as designed, with these refinements (this section is authoritative where
+it differs from the above):
+
+- **Font source & subsetting.** Vendored Google's *latin-subset variable* woff2
+  (Roboto 43 KB wght 100–900, Roboto Mono 33 KB) under `scripts/fonts-src/` with
+  their `OFL.txt`. `scripts/build-fonts.ts` uses `subset-font` (dev dep) to
+  instance to wght 200/400/600 (+ mono 400) and subset to the charset, emitting
+  `src/fonts.generated.ts`. Output was byte-identical across two local runs
+  (deterministic). Per-face subset sizes: sans ≈ 13 KB woff2 (~17 KB base64),
+  mono ≈ 7.6 KB (~10 KB base64).
+- **Arrows are SVG shapes, not glyphs.** `→` (U+2192) is outside Google's latin
+  subset, so the charset omits it and the Less/More legends use text + swatches
+  (no arrow glyph). This kept the source font small (no full-glyph vendoring).
+- **Font validity test replaces the CI freshness gate.** A byte-diff re-run gate
+  risks false failures if `harfbuzz` (wasm) is not byte-identical across
+  platforms (verified identical only on macOS locally). Instead, `test/fonts.test.ts`
+  asserts each generated face decodes to a `wOF2` signature and `fontFaceCss`
+  emits the expected rules. `pnpm run fonts` stays a documented dev step; CI is
+  unchanged.
+- **Runtime has no `fs`.** Faces are Base64 constants in `src/fonts.generated.ts`,
+  consumed by `src/fonts.ts`; `cardFrame` injects the default set
+  (`sans200`+`sans600`+`mono400`) per card. `.t-unit` uses weight 200 (not 400)
+  to keep the default embed to three faces.
+- **`subset-font` ambient types.** Added `scripts/subset-font.d.ts` (the package
+  ships none) so `tsc` passes.
+- **Card heights (fixture):** overview 248, lifetime 287, contributions
+  (unchanged), composition 248, rhythm 227, languages 332.
+- **Verified end-to-end.** `node src/main.ts` against the live API generated all
+  12 cards (@seijikohara: 11,139 lifetime contributions, 24 languages). Visual QA
+  (cards embedded via `<img>`, both themes) confirmed the embedded Roboto renders
+  and the layouts are clean. 90 tests pass; typecheck and lint are clean.
