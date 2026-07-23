@@ -19,6 +19,12 @@ export interface Theme {
   readonly accent: string;
   /** Contribution levels NONE..FOURTH_QUARTILE (GitHub's own ramp). */
   readonly contribRamp: readonly [string, string, string, string, string];
+  /**
+   * Categorical series colors for the composition card, in segment order:
+   * commits, pull requests, issues, reviews, private. Primer data hues, chosen
+   * to stay legible on the inset background; private is a quiet neutral.
+   */
+  readonly seriesRamp: readonly [string, string, string, string, string];
 }
 
 export const LIGHT: Theme = {
@@ -30,6 +36,7 @@ export const LIGHT: Theme = {
   fgMuted: "#59636e",
   accent: "#0969da",
   contribRamp: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+  seriesRamp: ["#0969da", "#8250df", "#1a7f37", "#bc4c00", "#8b949e"],
 };
 
 export const DARK: Theme = {
@@ -41,14 +48,15 @@ export const DARK: Theme = {
   fgMuted: "#9198a1",
   accent: "#4493f8",
   contribRamp: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+  seriesRamp: ["#4493f8", "#a371f7", "#3fb950", "#db6d28", "#6e7681"],
 };
 
 export const THEMES: readonly Theme[] = [LIGHT, DARK];
 
 export const FONT_SANS =
-  "-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
+  "'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
 export const FONT_MONO =
-  "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace";
+  "'Roboto Mono',ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace";
 
 /** Parse #rrggbb into channels. Throws on malformed input (all inputs are first-party constants or linguist colors). */
 export function hexToRgb(hex: string): [number, number, number] {

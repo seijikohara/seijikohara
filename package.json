@@ -10,6 +10,7 @@
   "scripts": {
     "generate": "node src/main.ts",
     "badges": "node scripts/generate-badges.ts",
+    "fonts": "node scripts/build-fonts.ts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint",
     "test": "vitest run",
@@ -19,6 +20,7 @@
     "@types/node": "^24.13.3",
     "oxlint": "^1.75.0",
     "simple-icons": "^16.27.0",
+    "subset-font": "^2.5.0",
     "typescript": "^7.0.2",
     "vite": "^8.1.5",
     "vitest": "^4.1.10"
