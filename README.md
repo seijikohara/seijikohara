@@ -19,7 +19,7 @@ Software Engineer.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/lifetime.dark.svg">
-  <img alt="Lifetime contributions heatmap: one row per year from 2014 to the present, each week shaded by activity level" src="./assets/lifetime.light.svg" width="100%">
+  <img alt="Contribution history: one row per year from 2014 to the present, each week shaded by activity level" src="./assets/lifetime.light.svg" width="100%">
 </picture>
 
 <picture>
@@ -49,4 +49,4 @@ Software Engineer.
   <a href="https://www.npmjs.com/~seijikohara"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/badges/npm.dark.svg"><img alt="npm" src="./assets/badges/npm.light.svg"></picture></a>
 </p>
 
-<sub>Cards are static SVGs regenerated every 6 hours by <a href=".github/workflows/profile.yml">a dependency-free workflow</a> in this repository. Type is set in <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>, embedded under the <a href="https://openfontlicense.org/">SIL Open Font License 1.1</a>.</sub>
+<sub>Cards are static SVGs regenerated every 6 hours by <a href=".github/workflows/profile.yml">a scheduled workflow</a> using <a href="https://github.com/seijikohara/profile-cards-action">profile-cards-action</a>. Type is set in <a href="https://fonts.google.com/specimen/Roboto">Roboto</a> and <a href="https://fonts.google.com/specimen/Roboto+Mono">Roboto Mono</a>, embedded under the <a href="https://openfontlicense.org/">SIL Open Font License 1.1</a>.</sub>
