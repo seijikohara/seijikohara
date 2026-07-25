@@ -1,10 +1,9 @@
-# Refreshes the committed profile cards on a schedule.
+# Refreshes the committed profile cards and badges on a schedule.
 #
-# Deliberately uses ZERO actions (`uses:`): every past outage of this pipeline
-# came from third-party actions (OOM in pacman-contribution-graph, GraphQL
-# resource-limit failures in user-statistician). The generator itself runs on
-# Node.js built-ins with no npm dependencies, so the scheduled path has no
-# third-party code at all.
+# The generator lives in seijikohara/profile-cards-action; this repository is
+# just its consumer. That action is first-party and pinned to a major tag, so
+# the scheduled path still carries no unmaintained third-party code — the reason
+# the previous pipeline avoided actions entirely.
 name: Profile
 
 on:
@@ -25,71 +24,31 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Select Node.js 24 from the hosted toolcache
-        run: |
-          set -euo pipefail
-          # `|| true` keeps set -e from aborting on a glob miss, so the
-          # nodejs.org fallback below stays reachable.
-          node_bin="$(ls -d "${RUNNER_TOOL_CACHE:-/opt/hostedtoolcache}"/node/24.*/x64/bin 2>/dev/null | sort -V | tail -n 1 || true)"
-          if [ -z "${node_bin}" ]; then
-            echo "Node 24 not in toolcache; falling back to checksum-verified nodejs.org download" >&2
-            cd "${RUNNER_TEMP}"
-            curl -fsSLO https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt
-            tarball="$(grep -o 'node-v24[^ ]*-linux-x64\.tar\.xz' SHASUMS256.txt | head -n 1)"
-            curl -fsSLO "https://nodejs.org/dist/latest-v24.x/${tarball}"
-            grep " ${tarball}\$" SHASUMS256.txt | sha256sum -c -
-            mkdir -p node24
-            tar -xJf "${tarball}" -C node24 --strip-components=1
-            node_bin="${RUNNER_TEMP}/node24/bin"
-          fi
-          "${node_bin}/node" --version
-          echo "${node_bin}" >> "${GITHUB_PATH}"
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-      - name: Clone repository
-        # x-access-token is the documented username for the installation access
-        # token GITHUB_TOKEN is. The credential lives only in this job's
-        # ephemeral runner and expires when the job ends.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          git clone --depth 1 --branch "${GITHUB_REF_NAME}" \
-            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
-
-      - name: Generate cards
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: repo
-        run: node src/main.ts
-
-      - name: Commit and push refreshed assets
-        # GITHUB_TOKEN pushes never retrigger workflows; [skip ci] is
-        # defense-in-depth in case the token type ever changes.
-        working-directory: repo
-        run: |
-          set -euo pipefail
-          git add assets
-          if git diff --cached --quiet; then
-            echo "No asset changes; skipping commit."
-            exit 0
-          fi
-          git -c user.name="github-actions[bot]" \
-              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "chore(profile): refresh generated cards [skip ci]"
-          # The branch can advance while the generator runs (Renovate, manual
-          # pushes); rebase the asset commit and retry instead of failing.
-          for attempt in 1 2 3; do
-            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
-              exit 0
-            fi
-            echo "Push attempt ${attempt} rejected; rebasing onto the latest ${GITHUB_REF_NAME}" >&2
-            git fetch origin "${GITHUB_REF_NAME}"
-            git -c user.name="github-actions[bot]" \
-                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-                rebase FETCH_HEAD
-          done
-          echo "Failed to push after 3 attempts" >&2
-          exit 1
+      - name: Render and commit profile cards
+        uses: seijikohara/profile-cards-action@v0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          username: seijikohara
+          cards: overview,lifetime,contributions,composition,rhythm,languages
+          output-dir: assets
+          themes: light,dark
+          font: Roboto
+          mono-font: Roboto Mono
+          # Brand names only; the README supplies each badge's link.
+          badges: |
+            LinkedIn
+            Facebook
+            Findy
+            LAPRAS
+            Wantedly
+            Qiita
+            Zenn
+            Maven Central
+            npm
+          commit: true
 
   keepalive:
     # Public-repo schedules are disabled after 60 days without "repository
