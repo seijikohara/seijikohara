@@ -1,8 +1,8 @@
 {
   // Shared Renovate policy across seijikohara repositories.
-  // Managers: npm (pnpm-lock.yaml + packageManager for the card generator's
-  // dev tooling) and github-actions (guards against reintroduced `uses:` —
-  // the workflows themselves are action-free by design).
+  // Manager: github-actions only — this repository holds no source, just the
+  // generated cards and the workflow that calls seijikohara/profile-cards-action,
+  // so Renovate's job here is keeping that action (and actions/checkout) current.
   // Schema: https://docs.renovatebot.com/renovate-schema.json
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
@@ -17,7 +17,7 @@
   timezone: "Asia/Tokyo",
   schedule: ["before 9am on monday"],
   labels: ["dependencies"],
-  enabledManagers: ["github-actions", "npm"],
+  enabledManagers: ["github-actions"],
   // Keep update branches rebased on main and merge via rebase once CI passes.
   rebaseWhen: "behind-base-branch",
   platformAutomerge: true,
@@ -25,15 +25,6 @@
   // Hold every release for 3 days so a hijacked publish cannot ride automerge on day zero.
   minimumReleaseAge: "3 days",
   packageRules: [
-    {
-      // Keep semver ranges in package.json but still deliver in-range updates
-      // by bumping pnpm-lock.yaml (":preserveSemverRanges"'s replace strategy
-      // would silently skip every in-range release). Overrides best-practices
-      // dev-dependency pinning; action digest pinning is unaffected.
-      description: "Update the lockfile within existing ranges",
-      matchManagers: ["npm"],
-      rangeStrategy: "update-lockfile",
-    },
     {
       description: "Auto-merge non-major updates once CI passes",
       matchUpdateTypes: ["minor", "patch", "pin", "pinDigest", "digest", "lockFileUpdate"],
