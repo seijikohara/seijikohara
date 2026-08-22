@@ -38,6 +38,16 @@ Software Engineer.
 </picture>
 
 <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/cadence.dark.svg">
+  <img alt="Commit cadence: commits by weekday and hour of day over the trailing year, in author-local time" src="./assets/cadence.light.svg" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/repositories.dark.svg">
+  <img alt="Top repositories: public repositories ranked by commits over the trailing year" src="./assets/repositories.light.svg" width="100%">
+</picture>
+
+<picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/languages.dark.svg">
   <img alt="Languages: share of public source code by bytes, drawn as a treemap" src="./assets/languages.light.svg" width="100%">
 </picture>

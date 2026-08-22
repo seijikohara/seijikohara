@@ -32,7 +32,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: seijikohara
-          cards: overview,lifetime,contributions,composition,rhythm,languages
+          cards: overview,lifetime,contributions,composition,rhythm,cadence,repositories,languages
           output-dir: assets
           themes: light,dark
           font: Roboto
