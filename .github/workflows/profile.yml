@@ -37,6 +37,9 @@ jobs:
           themes: light,dark
           font: Roboto
           mono-font: Roboto Mono
+          # 24 languages in total; 12 rows keep the long tail readable without
+          # making the card much taller than its neighbours.
+          language-limit: 12
           # Brand names only; the README supplies each badge's link.
           badges: |
             LinkedIn
