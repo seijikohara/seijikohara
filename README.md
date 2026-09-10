@@ -18,13 +18,18 @@ Software Engineer.
 </picture>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/lifetime.dark.svg">
-  <img alt="Contribution history: one row per year from 2014 to the present, each week shaded by activity level" src="./assets/lifetime.light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/momentum.dark.svg">
+  <img alt="Momentum: contributions in each trailing twelve months, sampled weekly since the first contribution in 2014" src="./assets/momentum.light.svg" width="100%">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/contributions.dark.svg">
   <img alt="Contributions: current and longest streaks, with the past 12 months as an isometric 3D calendar" src="./assets/contributions.light.svg" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/lifetime.dark.svg">
+  <img alt="Contribution history: one row per year from 2014 to the present, each week shaded by activity level" src="./assets/lifetime.light.svg" width="100%">
 </picture>
 
 <picture>
@@ -34,22 +39,27 @@ Software Engineer.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/rhythm.dark.svg">
-  <img alt="Activity rhythm: contributions by weekday and by month of the year" src="./assets/rhythm.light.svg" width="100%">
+  <img alt="Activity rhythm: contributions by weekday and by month of the year, each bar marked with where the trailing year sits" src="./assets/rhythm.light.svg" width="100%">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/cadence.dark.svg">
-  <img alt="Commit cadence: commits by weekday and hour of day over the trailing year, in author-local time" src="./assets/cadence.light.svg" width="100%">
+  <img alt="Commit cadence: commits by weekday and hour of day over the trailing year in author-local time, with a commit-size distribution" src="./assets/cadence.light.svg" width="100%">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/repositories.dark.svg">
-  <img alt="Top repositories: public repositories ranked by commits over the trailing year" src="./assets/repositories.light.svg" width="100%">
+  <img alt="Top repositories: public repositories ranked by commits over the trailing year, each bar set against the repository's whole history" src="./assets/repositories.light.svg" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/portfolio.dark.svg">
+  <img alt="Portfolio: one lifeline per public source repository, from creation to last push, with its language, commit count, and license" src="./assets/portfolio.light.svg" width="100%">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/languages.dark.svg">
-  <img alt="Languages: share of public source code by bytes, drawn as a treemap" src="./assets/languages.light.svg" width="100%">
+  <img alt="Languages: share of public source code by bytes as a treemap, beside a list showing how many repositories each language turns up in" src="./assets/languages.light.svg" width="100%">
 </picture>
 
 ### Packages
