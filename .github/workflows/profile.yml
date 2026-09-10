@@ -32,7 +32,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: seijikohara
-          cards: overview,lifetime,contributions,composition,rhythm,cadence,repositories,languages
+          # No `cards`: the action's default is every card it can draw, and a
+          # list repeated here goes stale the day the action gains one.
           output-dir: assets
           themes: light,dark
           font: Roboto
@@ -40,6 +41,9 @@ jobs:
           # 24 languages in total; 12 rows keep the long tail readable without
           # making the card much taller than its neighbours.
           language-limit: 12
+          # Print the counts each step of the green ramp stands for. Less…More
+          # says only which end is which.
+          legend: scale
           # Brand names only; the README supplies each badge's link.
           badges: |
             LinkedIn
