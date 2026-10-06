@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   refresh:
-    runs-on: ubuntu-24.04 # pinned: ubuntu-latest will eventually move to 26.04
+    runs-on: ubuntu-26.04 # pinned: ubuntu-latest will eventually move to 26.04
     timeout-minutes: 10
     permissions:
       contents: write
@@ -61,7 +61,7 @@ jobs:
     # Public-repo schedules are disabled after 60 days without "repository
     # activity", and GitHub does not document whether bot commits count.
     # Re-enabling the workflow is the documented reset, so do it every run.
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     permissions:
       actions: write
