@@ -43,6 +43,15 @@
       groupName: "github-actions",
       addLabels: ["github-actions"],
     },
+    {
+      // A digest update re-points a pinned action at the commit its tag resolves
+      // to now. Under the default timestamp-required behaviour, a digest update
+      // without a release timestamp keeps renovate/stability-days pending
+      // indefinitely, which blocks automerge (#10 has waited since 2026-09-27).
+      description: "Treat digest updates without a release timestamp as stable",
+      matchUpdateTypes: ["digest"],
+      minimumReleaseAgeBehaviour: "timestamp-optional",
+    },
   ],
   vulnerabilityAlerts: {
     description: "Raise security fixes immediately and require manual review",
