@@ -13,53 +13,8 @@ Software Engineer.
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/overview.dark.svg">
-  <img alt="Overview: lifetime and current-year contributions, stars, followers, merged pull requests, issues, public repositories, and recently contributed-to repositories" src="./assets/overview.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/momentum.dark.svg">
-  <img alt="Momentum: contributions in each trailing twelve months, sampled weekly since the first contribution in 2014" src="./assets/momentum.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/contributions.dark.svg">
-  <img alt="Contributions: current and longest streaks, with the past 12 months as an isometric 3D calendar" src="./assets/contributions.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/lifetime.dark.svg">
-  <img alt="Contribution history: one row per year from 2014 to the present, each week shaded by activity level" src="./assets/lifetime.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/composition.dark.svg">
-  <img alt="Contribution composition by year: commits, pull requests, issues, reviews, and private contributions, with the overall private share" src="./assets/composition.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/rhythm.dark.svg">
-  <img alt="Activity rhythm: contributions by weekday and by month of the year, each bar marked with where the trailing year sits" src="./assets/rhythm.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/cadence.dark.svg">
-  <img alt="Commit cadence: commits by weekday and hour of day over the trailing year in author-local time, with a commit-size distribution" src="./assets/cadence.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/repositories.dark.svg">
-  <img alt="Top repositories: public repositories ranked by commits over the trailing year, each bar set against the repository's whole history" src="./assets/repositories.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/portfolio.dark.svg">
-  <img alt="Portfolio: one lifeline per public source repository, from creation to last push, with its language, commit count, and license" src="./assets/portfolio.light.svg" width="100%">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/languages.dark.svg">
-  <img alt="Languages: share of public source code by bytes as a treemap, beside a list showing how many repositories each language turns up in" src="./assets/languages.light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/cards.dark.svg">
+  <img alt="Profile cards: an overview of contribution and repository counts; momentum in trailing twelve-month windows since 2014; current and longest streaks with the past year as an isometric 3D calendar; contribution history by week since 2014; contribution composition by year; activity rhythm by weekday and month; commit cadence by weekday and hour; top repositories by trailing-year commits; a lifeline per public source repository; and languages by bytes" src="./assets/cards.light.svg" width="100%">
 </picture>
 
 ### Packages

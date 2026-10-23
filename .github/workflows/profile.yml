@@ -28,12 +28,15 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Render and commit profile cards
-        uses: seijikohara/profile-cards-action@85cb62ccc7b2eaff76b55da446ae331b276ebe9d # v1
+        uses: seijikohara/profile-cards-action@10a2b4619ce449de517124d4fb1e92c3fd4185c4 # v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: seijikohara
           # No `cards`: the action's default is every card it can draw, and a
           # list repeated here goes stale the day the action gains one.
+          # One image for every card, stacked in the default order: the README
+          # embeds a single <picture>, and the fonts are embedded once.
+          layout: combined
           output-dir: assets
           themes: light,dark
           font: Roboto
