@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Render and commit profile cards
-        uses: seijikohara/profile-cards-action@1e22eeeb0c3fe4ba86bb63f625cb75cec05ec030 # v1
+        uses: seijikohara/profile-cards-action@cc2187f53b4cc3b6bcef91c5a6a33c3978c4a3a7 # v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: seijikohara
