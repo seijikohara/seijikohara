@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Render and commit profile cards
+      - name: Render profile cards and commit them outside pull requests
         uses: seijikohara/profile-cards-action@10a2b4619ce449de517124d4fb1e92c3fd4185c4 # v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
