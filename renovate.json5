@@ -1,63 +1,9 @@
 {
-  // Shared Renovate policy across seijikohara repositories.
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  // Shared policy: https://github.com/seijikohara/renovate-config
+  extends: ["github>seijikohara/renovate-config:default.json5"],
   // Manager: github-actions only — this repository holds no source, just the
   // generated cards and the workflow that calls seijikohara/profile-cards-action,
   // so Renovate's job here is keeping that action (and actions/checkout) current.
-  // Schema: https://docs.renovatebot.com/renovate-schema.json
-  $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: [
-    // Maintainer-recommended superset of config:recommended. Pins GitHub Action
-    // digests, enables config migration, and adds the supply-chain cooldown.
-    "config:best-practices",
-    // Conventional Commits with a unified `chore(deps): ...` subject.
-    ":semanticCommits",
-    ":semanticCommitTypeAll(chore)",
-    ":semanticCommitScope(deps)",
-  ],
-  timezone: "Asia/Tokyo",
-  schedule: ["before 9am on monday"],
-  labels: ["dependencies"],
   enabledManagers: ["github-actions"],
-  // Keep update branches rebased on main and merge via rebase once CI passes.
-  rebaseWhen: "behind-base-branch",
-  platformAutomerge: true,
-  automergeStrategy: "rebase",
-  // Hold every release for 3 days so a hijacked publish cannot ride automerge on day zero.
-  minimumReleaseAge: "3 days",
-  packageRules: [
-    {
-      description: "Auto-merge non-major updates once CI passes",
-      matchUpdateTypes: ["minor", "patch", "pin", "pinDigest", "digest", "lockFileUpdate"],
-      automerge: true,
-    },
-    {
-      description: "Hold major updates for manual review via the dependency dashboard",
-      matchUpdateTypes: ["major"],
-      automerge: false,
-      dependencyDashboardApproval: true,
-      addLabels: ["major"],
-    },
-    {
-      description: "Group and label GitHub Actions updates",
-      matchManagers: ["github-actions"],
-      groupName: "github-actions",
-      addLabels: ["github-actions"],
-    },
-    {
-      // A digest update re-points a pinned action at the commit its tag resolves
-      // to now. Under the default timestamp-required behaviour, a digest update
-      // without a release timestamp keeps renovate/stability-days pending
-      // indefinitely, which blocks automerge (#10 has waited since 2026-09-27).
-      description: "Treat digest updates without a release timestamp as stable",
-      matchUpdateTypes: ["digest"],
-      minimumReleaseAgeBehaviour: "timestamp-optional",
-    },
-  ],
-  vulnerabilityAlerts: {
-    description: "Raise security fixes immediately and require manual review",
-    schedule: ["at any time"],
-    minimumReleaseAge: null,
-    addLabels: ["security"],
-    automerge: false,
-  },
 }
